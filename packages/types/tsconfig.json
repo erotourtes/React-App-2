@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "strict": true,
+    "rootDirs": ["lib"],
+    "outDir": "dist",
+    "types": ["node"],
+    "declaration": true,
+    // -- Changed -- \\
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    // "allowSyntheticDefaultImports": true,
+    "strictNullChecks": false,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "noFallthroughCasesInSwitch": false
+  },
+  "include": ["lib/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

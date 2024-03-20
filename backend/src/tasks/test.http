@@ -1,0 +1,25 @@
+POST http://localhost:3000/tasks
+Content-Type: application/json
+
+{
+  "name": "Task Name",
+  "description": "Task Description",
+  "dueDate": "2024-03-25T12:00:00Z",
+  "priority": "low",
+  "order": 1,
+  "listId": 1
+}
+
+###
+
+GET http://localhost:3000/tasks?listId=1
+
+###
+
+PATCH  http://localhost:3000/tasks/1
+Content-Type: application/json
+
+{
+  "name": "Updrted Task Name 8",
+  "priority":"medium" 
+}
