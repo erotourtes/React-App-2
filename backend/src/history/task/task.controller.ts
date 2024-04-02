@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { TaskHistoryService } from './tasks.service';
 
 @Controller('history/tasks')
@@ -6,8 +6,8 @@ export class TaskHistoryController {
   constructor(private readonly historyService: TaskHistoryService) {}
 
   @Get()
-  async findAll() {
-    return this.historyService.findAll();
+  async findAll(@Query('boardId') boardId: number) {
+    return this.historyService.findAll(boardId);
   }
 
   @Get(':taskId')

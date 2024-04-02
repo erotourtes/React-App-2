@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { classValidatorResolver } from "@hookform/resolvers/class-validator";
-import { CreateTaskDto, TaskPriority, TaskT } from "@packages/types";
+import { CreateTaskDto, TaskListT, TaskPriority, TaskT } from "@packages/types";
 import { BarChart, CalendarIcon, FileBarChart2, Pencil } from "lucide-react";
 import { useContext, createContext } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -36,7 +36,7 @@ import { useGetAllTaskListsQuery } from "@/redux/api/hooks";
 
 interface TaskFormProps {
   task?: TaskT;
-  listId: number;
+  selectedList: TaskListT;
   onSubmit: (data: CreateTaskDto) => void;
   edit?: boolean;
   onEditRequest?: () => void;
@@ -52,7 +52,7 @@ const FormContext = createContext<{
 
 export function TaskForm({
   task,
-  listId,
+  selectedList,
   edit,
   onSubmit,
   onEditRequest,
@@ -65,7 +65,7 @@ export function TaskForm({
       priority: task?.priority || undefined,
       description: task?.description || "",
       dueDate: task?.dueDate || undefined,
-      listId,
+      listId: selectedList.id,
     },
   });
 
@@ -74,7 +74,7 @@ export function TaskForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         <FormContext.Provider value={{ form, edit: edit == true }}>
           <FormName onEditRequest={onEditRequest} />
-          <FormStatus listId={listId} />
+          <FormStatus listId={selectedList.id} boardId={selectedList.boardId} />
           <FormDate />
           <FormPriority />
           <FormDescription />
@@ -122,9 +122,15 @@ const FormName = ({ onEditRequest }: { onEditRequest?: () => void }) => {
   );
 };
 
-const FormStatus = ({ listId }: { listId: number }) => {
+const FormStatus = ({
+  listId,
+  boardId,
+}: {
+  listId: number;
+  boardId: number;
+}) => {
   const { form, edit } = useContext(FormContext);
-  const { data: lists = [] } = useGetAllTaskListsQuery();
+  const { data: lists = [] } = useGetAllTaskListsQuery(boardId);
   const selectedList = lists?.find((list) => list.id === listId);
 
   return (
@@ -140,6 +146,7 @@ const FormStatus = ({ listId }: { listId: number }) => {
           {edit ? (
             <MoveToListSelect
               placeholder={selectedList?.name}
+              boardId={boardId}
               selectedListId={listId}
               onSelect={field.onChange}
             />

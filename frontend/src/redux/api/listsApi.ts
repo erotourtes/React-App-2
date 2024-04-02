@@ -7,8 +7,8 @@ import {
 
 export const listsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllTaskLists: builder.query<TaskListT[], void>({
-      query: () => `task-lists`,
+    getAllTaskLists: builder.query<TaskListT[], number>({
+      query: (boardId) => `task-lists?boardId=${boardId}`,
     }),
     createNewList: builder.mutation<TaskListT, CreateTaskListDto>({
       query: (list) => ({
@@ -21,7 +21,7 @@ export const listsApi = api.injectEndpoints({
         const patchResult = dispatch(
           listsApi.util.updateQueryData(
             "getAllTaskLists",
-            undefined,
+            list.boardId,
             (lists) => [...lists, { ...list, id: randId }]
           )
         );
@@ -30,7 +30,7 @@ export const listsApi = api.injectEndpoints({
             dispatch(
               listsApi.util.updateQueryData(
                 "getAllTaskLists",
-                undefined,
+                list.boardId,
                 (lists) => lists.map((l) => (l.id === randId ? list : l))
               )
             );
@@ -49,8 +49,11 @@ export const listsApi = api.injectEndpoints({
       }),
       onQueryStarted(list, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
-          listsApi.util.updateQueryData("getAllTaskLists", undefined, (lists) =>
-            lists.map((l) => (l.id === list.id ? { ...l, ...list } : l))
+          listsApi.util.updateQueryData(
+            "getAllTaskLists",
+            list.boardId,
+            (lists) =>
+              lists.map((l) => (l.id === list.id ? { ...l, ...list } : l))
           )
         );
         queryFulfilled.catch(() => {
@@ -59,15 +62,17 @@ export const listsApi = api.injectEndpoints({
         });
       },
     }),
-    deleteNewList: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `task-lists/${id}`,
+    deleteNewList: builder.mutation<void, TaskListT>({
+      query: (list) => ({
+        url: `task-lists/${list.id}`,
         method: "DELETE",
       }),
-      onQueryStarted(id, { dispatch, queryFulfilled }) {
+      onQueryStarted(list, { dispatch, queryFulfilled }) {
         const patchResult = dispatch(
-          listsApi.util.updateQueryData("getAllTaskLists", undefined, (lists) =>
-            lists.filter((l) => l.id !== id)
+          listsApi.util.updateQueryData(
+            "getAllTaskLists",
+            list.boardId,
+            (lists) => lists.filter((l) => l.id !== list.id)
           )
         );
         queryFulfilled.catch(() => {

@@ -7,8 +7,8 @@ import TaskCard from "./TaskCard";
 import { isValidIdFor } from "@/utils/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function TaskList() {
-  const { data: lists = [] } = useGetAllTaskListsQuery();
+function TaskList({ boardId }: { boardId: number }) {
+  const { data: lists = [] } = useGetAllTaskListsQuery(boardId);
 
   return (
     <div className="flex gap-10 flex-wrap md:flex-nowrap md:overflow-x-auto pb-5">

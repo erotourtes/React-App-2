@@ -29,6 +29,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
     this.historyService.create({
       actionType: HistoryActionType.CREATE,
       recordId: event.entity.id,
+      boardId: event.entity.list.boardId,
     });
   }
 
@@ -44,6 +45,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
         oldValue: event.databaseEntity.list.id.toString(),
         newValue: newTask.list.id.toString(),
         recordId: event.entity.id,
+        boardId: newTask.list.boardId,
       });
     }
 
@@ -55,6 +57,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
         oldValue: event.databaseEntity[value.databaseName],
         newValue: newTask[value.databaseName],
         recordId: event.entity.id,
+        boardId: newTask.list.boardId,
       });
     }
   }
@@ -63,6 +66,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
     this.historyService.create({
       actionType: HistoryActionType.DELETE,
       recordId: entity.id,
+      boardId: entity.list.boardId,
     });
   }
 }

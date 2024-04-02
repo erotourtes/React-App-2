@@ -23,9 +23,9 @@ export class TaskListsService {
     private readonly tasksService: TasksService,
   ) {}
 
-  async findAll(): Promise<TaskListT[]> {
+  async findAll(boardId: number): Promise<TaskListT[]> {
     return this.taskListsRepository.find({
-      where: { isDeleted: false },
+      where: { isDeleted: false, boardId },
     });
   }
 

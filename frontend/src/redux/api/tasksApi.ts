@@ -1,5 +1,9 @@
 import { api } from "@/redux/api/apiSlice";
-import { CreateTaskDto, TaskT, UpdateTaskDto } from "@packages/types";
+import {
+  CreateTaskDto,
+  TaskT,
+  UpdateTaskDto,
+} from "@packages/types";
 
 export const tasksApi = api.injectEndpoints({
   endpoints: (builder) => ({

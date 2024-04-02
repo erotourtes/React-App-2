@@ -42,14 +42,14 @@ function ListHeader({
   const [updateListApi] = useUpdateNewListMutation();
 
   const deleteList = useCallback(() => {
-    deleteListApi(list.id);
-  }, [list.id, deleteListApi]);
+    deleteListApi(list);
+  }, [list, deleteListApi]);
 
   const updateList = useCallback(
     (name: string) => {
-      updateListApi({ id: list.id, name });
+      updateListApi({ ...list, name });
     },
-    [list.id, updateListApi]
+    [list, updateListApi]
   );
 
   return (
@@ -86,7 +86,7 @@ function ListHeader({
         <AddTaskDialog
           isOpen={open}
           onDialogChange={setOpen}
-          selectedListId={list.id}
+          selectedList={list}
         />
       )}
       {editDialog && (

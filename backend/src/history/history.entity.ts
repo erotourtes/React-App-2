@@ -1,9 +1,12 @@
 import { HistoryActionType } from '@packages/types';
+import { Board } from 'src/board/board.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 export { HistoryActionType };
@@ -36,4 +39,11 @@ export class History {
 
   @Column()
   recordId: number;
+
+  @ManyToOne(() => Board, (board) => board.histories)
+  @JoinColumn({ name: 'boardId' })
+  board: Board;
+
+  @Column()
+  boardId: number;
 }

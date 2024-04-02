@@ -7,8 +7,8 @@ const wsService = WebSocketService.create(config.WS_URL);
 
 export const historyApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllHistory: builder.query<HistoryT[], void>({
-      query: () => `history/tasks`,
+    getAllHistory: builder.query<HistoryT[], number>({
+      query: (boardId: number) => `history/tasks?boardId=${boardId}`,
       onCacheEntryAdded: async (_, { updateCachedData }) => {
         wsService.on<HistoryT>("history:task:new", (data) => {
           updateCachedData((draft) => {

@@ -7,9 +7,9 @@ function App() {
   return (
     <div className="container p-5">
       <div className="mb-7">
-        <NavBar />
+        <NavBar boardId={1} />
       </div>
-      <TaskList />
+      <TaskList boardId={1} />
       <Toaster />
     </div>
   );

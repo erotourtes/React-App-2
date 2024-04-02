@@ -1,11 +1,16 @@
-POST http://localhost:3000/task-lists
+POST http://localhost:3000/api/task-lists
 Content-Type: application/json
 
 {
   "name": "Tasks List 1",
-  "tasksIds": []
+  "tasksIds": [],
+  "boardId": 1
 }
 
 ###
 
-GET http://localhost:3000/task-lists
+GET http://localhost:3000/api/task-lists?boardId=1
+
+###
+
+DELETE  http://localhost:3000/api/task-lists/1

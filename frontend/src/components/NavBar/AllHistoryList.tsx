@@ -9,8 +9,13 @@ import {
 import { useGetAllHistoryQuery } from "@/redux/api/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const AllHistoryList = ({ children }: React.PropsWithChildren) => {
-  const { data: historyList = [], isLoading } = useGetAllHistoryQuery();
+interface AllHistoryListProps {
+  children: React.ReactNode;
+  boardId: number;
+}
+
+const AllHistoryList = ({ children, boardId }: AllHistoryListProps) => {
+  const { data: historyList = [], isLoading } = useGetAllHistoryQuery(boardId);
 
   return (
     <Sheet>

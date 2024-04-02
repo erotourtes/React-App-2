@@ -20,6 +20,7 @@ export class BaseHistoryService<T> {
     oldValue?: string;
     newValue?: string;
     recordId: number;
+    boardId?: number;
   }) {
     const newRecord = this.historyRepository.create({
       ...record,
@@ -39,8 +40,10 @@ export class BaseHistoryService<T> {
     });
   }
 
-  async findAll(): Promise<History[]> {
-    return await this.historyRepository.query(`
+  async findAll(boardId: number): Promise<History[]> {
+    // TODO: raw sql in service!!
+    return await this.historyRepository.query(
+      `
 SELECT h.*, t.name as name,
         CASE
           WHEN h."fieldName" = 'list' THEN (SELECT name FROM task_list WHERE id = h."oldValue"::INTEGER)
@@ -53,8 +56,12 @@ SELECT h.*, t.name as name,
 FROM history h
 LEFT JOIN task t 
   ON h."recordId" = t.id AND h."tableName" = 'task'
+LEFT JOIN task_list tl
+  ON tl."boardId" = $1 AND t."listId" = tl.id
 ORDER BY h."timestamp" ASC
-`);
+`,
+      [boardId],
+    );
   }
 
   async findEntityHistory(id: number): Promise<HistoryT[]> {
@@ -112,12 +119,13 @@ export abstract class BaseHistoryServiceTemplate<T> {
     oldValue?: string;
     newValue?: string;
     recordId: number;
+    boardId: number;
   }) {
     await this.historyService.create(record);
   }
 
-  async findAll(): Promise<History[]> {
-    return this.historyService.findAll();
+  async findAll(boardId: number): Promise<History[]> {
+    return this.historyService.findAll(boardId);
   }
 
   async findEntityHistory(id: number): Promise<HistoryT[]> {

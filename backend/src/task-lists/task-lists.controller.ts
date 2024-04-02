@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TaskListsService } from './task-lists.service';
 import { CreateTaskListDto, UpdateTaskListDto } from '@packages/types';
@@ -16,8 +17,8 @@ export class TaskListsController {
   constructor(private readonly taskListsService: TaskListsService) {}
 
   @Get()
-  async findAll() {
-    return this.taskListsService.findAll();
+  async findAll(@Query('boardId') boardId: number) {
+    return this.taskListsService.findAll(boardId);
   }
 
   @Post()
