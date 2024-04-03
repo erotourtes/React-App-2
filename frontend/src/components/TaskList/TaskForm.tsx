@@ -105,6 +105,7 @@ const FormName = ({ onEditRequest }: { onEditRequest?: () => void }) => {
               <H3>{field.value}</H3>
               <Button
                 variant="outline"
+                className={"focus-visible:ring-transparent"}
                 onClick={(e) => {
                   e.preventDefault();
                   onEditRequest?.call(null);
