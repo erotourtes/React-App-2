@@ -40,7 +40,7 @@ export class History {
   @Column()
   recordId: number;
 
-  @ManyToOne(() => Board, (board) => board.histories)
+  @ManyToOne(() => Board, (board) => board.histories, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'boardId' })
   board: Board;
 

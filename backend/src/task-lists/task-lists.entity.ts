@@ -23,7 +23,7 @@ export class TaskList {
   @OneToMany(() => Task, (task) => task.list, { onDelete: 'CASCADE' })
   tasks: Task[];
 
-  @ManyToOne(() => Board, (board) => board.lists)
+  @ManyToOne(() => Board, (board) => board.lists, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'boardId' })
   board: Board;
 

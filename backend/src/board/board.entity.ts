@@ -13,9 +13,9 @@ export class Board {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => TaskList, (list) => list.board)
+  @OneToMany(() => TaskList, (list) => list.board, { onDelete: 'CASCADE' })
   lists: TaskList[];
 
-  @OneToMany(() => History, (history) => history.board)
+  @OneToMany(() => History, (history) => history.board, { onDelete: 'CASCADE' })
   histories: History[];
 }

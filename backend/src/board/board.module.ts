@@ -3,10 +3,9 @@ import { BoardService } from './board.service';
 import { BoardController } from './board.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './board.entity';
-import { TaskListModule } from 'src/task-lists/task-lists.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Board]), TaskListModule],
+  imports: [TypeOrmModule.forFeature([Board])],
   providers: [BoardService],
   controllers: [BoardController],
 })
