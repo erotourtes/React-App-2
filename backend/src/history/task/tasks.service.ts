@@ -6,6 +6,7 @@ import { Logger } from '@nestjs/common';
 import { HistoryActionType, History } from '../history.entity';
 import { TaskHistoryGateway } from './task.gateway';
 import { HistoryServerT } from '@packages/types';
+import { TaskList } from 'src/task-lists/task-lists.entity';
 
 @Injectable()
 export class TaskHistoryService {
@@ -14,6 +15,8 @@ export class TaskHistoryService {
     @InjectRepository(History)
     private readonly historyRepository: Repository<History>,
     private readonly taskGateway: TaskHistoryGateway,
+    @InjectRepository(TaskList)
+    private readonly taskListRepository: Repository<TaskList>,
   ) {
     this.logger = new Logger(`${TaskHistoryGateway.name}`);
   }
@@ -35,6 +38,11 @@ export class TaskHistoryService {
     });
 
     const history = await this.historyRepository.save(newRecord);
+    await this.historyRepository.save(history);
+
+    // Mutates the history object
+    await this.joinSingleListName(history);
+
     this.taskGateway.sendHistoryUpdate({
       ...history,
       task: { name: record.taskName },
@@ -48,29 +56,50 @@ export class TaskHistoryService {
 
   async findAll(boardId: number): Promise<HistoryServerT[]> {
     const histories = await this.historyRepository.find({
-      select: {
-        task: {
-          name: true,
-        },
-      },
+      select: { task: { name: true } },
       where: { boardId },
       relations: { task: true },
     });
+
+    await this.joinListNameFor(histories);
 
     return histories;
   }
 
   async findEntityHistory(id: number): Promise<History[]> {
-    const record = await this.historyRepository.find({
-      select: {
-        task: {
-          name: true,
-        },
-      },
+    const histories = await this.historyRepository.find({
+      select: { task: { name: true } },
       where: { recordId: id },
       relations: { task: true },
     });
 
-    return record;
+    await this.joinListNameFor(histories);
+
+    return histories;
+  }
+
+  /*
+   * Mutates the histories array
+   */
+  private async joinListNameFor(histories: History[]) {
+    const promises = histories
+      .filter((h) => h.fieldName === 'list')
+      .map(this.joinSingleListName.bind(this));
+    await Promise.all(promises);
+  }
+
+  private async joinSingleListName(history: History) {
+    const oldList = await this.taskListRepository.findOne({
+      select: { name: true },
+      where: { id: +history.oldValue },
+    });
+
+    const newList = await this.taskListRepository.findOne({
+      select: { name: true },
+      where: { id: +history.newValue },
+    });
+
+    history.oldValue = oldList?.name;
+    history.newValue = newList?.name;
   }
 }
