@@ -54,9 +54,9 @@ SELECT h.*, t.name as name,
           ELSE h."newValue"
         END as "newValue"
 FROM history h
-LEFT JOIN task t 
+JOIN task t 
   ON h."recordId" = t.id AND h."tableName" = 'task'
-LEFT JOIN task_list tl
+JOIN task_list tl
   ON tl."boardId" = $1 AND t."listId" = tl.id
 ORDER BY h."timestamp" ASC
 `,
@@ -78,7 +78,7 @@ ORDER BY h."timestamp" ASC
           ELSE h."newValue"
         END as "newValue"
       FROM history h
-      LEFT JOIN ${this.tableName} t 
+      JOIN ${this.tableName} t 
         ON h."recordId" = t.id
       WHERE h."recordId" = $1
       ORDER BY h."timestamp" ASC
@@ -100,7 +100,7 @@ ORDER BY h."timestamp" ASC
           ELSE h."newValue"
         END as "newValue"
       FROM history h
-      LEFT JOIN ${this.tableName} t 
+      JOIN ${this.tableName} t 
         ON h."recordId" = t.id
       WHERE h.id = $1
       LIMIT 1;
