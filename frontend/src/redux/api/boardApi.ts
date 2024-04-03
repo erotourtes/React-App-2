@@ -1,9 +1,11 @@
 import { api } from "@/redux/api/apiSlice";
 import { BoardT, CreateBoardDto } from "@packages/types";
+import config from "@/config.ts";
 
 export const boardApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllBoards: builder.query<BoardT[], void>({
+      keepUnusedDataFor: config.CACHE_TIME,
       query: () => `board`,
     }),
     createBoard: builder.mutation<BoardT, CreateBoardDto>({

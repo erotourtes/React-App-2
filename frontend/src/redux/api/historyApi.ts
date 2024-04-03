@@ -9,6 +9,7 @@ export const historyApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllHistory: builder.query<HistoryT[], number>({
       query: (boardId: number) => `history/tasks?boardId=${boardId}`,
+      keepUnusedDataFor: config.CACHE_TIME,
       onCacheEntryAdded: async (_, { dispatch }) => {
         wsService.on<HistoryT>("history:task:new", (history) => {
           dispatch(historyApi.util.updateQueryData("getAllHistory", history.boardId,
@@ -18,6 +19,7 @@ export const historyApi = api.injectEndpoints({
       },
     }),
     getHistoryForTask: builder.query<HistoryT[], number>({
+      keepUnusedDataFor: config.CACHE_TIME,
       query: (taskId) => `history/tasks/${taskId}`,
       onCacheEntryAdded: async (_, { dispatch }) => {
         wsService.on<HistoryT>("history:task:new", (data) => {

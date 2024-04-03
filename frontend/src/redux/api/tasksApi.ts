@@ -4,10 +4,12 @@ import {
   TaskT,
   UpdateTaskDto,
 } from "@packages/types";
+import config from "@/config.ts";
 
 export const tasksApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getTasksForList: builder.query<TaskT[], number>({
+      keepUnusedDataFor: config.CACHE_TIME,
       query: (list: number) => `tasks/?listId=${list}`,
     }),
     updateTask: builder.mutation<
