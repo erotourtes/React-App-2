@@ -17,15 +17,6 @@ export class BoardService {
     return await this.boardRepository.find({ where: { isDeleted: false } });
   }
 
-  async findOne(id: number) {
-    const boardLists = await this.boardRepository.findOne({
-      select: ['lists'],
-      where: { id, isDeleted: false },
-      relations: { lists: true },
-    });
-    return boardLists.lists;
-  }
-
   async create(board: CreateBoardDto) {
     return await this.boardRepository.save(board);
   }

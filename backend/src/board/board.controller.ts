@@ -8,12 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
-import {
-  BoardT,
-  CreateBoardDto,
-  TaskListT,
-  UpdateBoardDto,
-} from '@packages/types';
+import { BoardT, CreateBoardDto, UpdateBoardDto } from '@packages/types';
 
 @Controller('board')
 export class BoardController {
@@ -22,11 +17,6 @@ export class BoardController {
   @Get()
   async findAll(): Promise<BoardT[]> {
     return this.boardService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: number): Promise<TaskListT[]> {
-    return this.boardService.findOne(id);
   }
 
   @Post()

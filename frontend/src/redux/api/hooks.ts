@@ -21,7 +21,6 @@ export const { useGetHistoryForTaskQuery, useGetAllHistoryQuery } = historyApi;
 
 export const {
   useGetAllBoardsQuery,
-  useGetBoardListsQuery,
   useCreateBoardMutation,
   useDeleteBoardMutation,
   useUpdateBoardMutation,
