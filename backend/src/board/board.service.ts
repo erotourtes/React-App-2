@@ -18,10 +18,12 @@ export class BoardService {
   }
 
   async findOne(id: number) {
-    return await this.boardRepository.findOne({
+    const boardLists = await this.boardRepository.findOne({
+      select: ['lists'],
       where: { id, isDeleted: false },
       relations: { lists: true },
     });
+    return boardLists.lists;
   }
 
   async create(board: CreateBoardDto) {

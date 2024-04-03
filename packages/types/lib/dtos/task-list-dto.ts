@@ -20,4 +20,5 @@ export class UpdateTaskListDto {
 export type TaskListT = {
   id: number;
   name: string;
+  boardId: number;
 }

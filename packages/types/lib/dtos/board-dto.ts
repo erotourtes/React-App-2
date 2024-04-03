@@ -4,3 +4,8 @@ export class CreateBoardDto {
   @MaxLength(128)
   name: string;
 }
+
+export type BoardT = {
+  id: number;
+  name: string;
+};
