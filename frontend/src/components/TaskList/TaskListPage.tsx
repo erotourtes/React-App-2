@@ -2,12 +2,12 @@ import NavBar from "@components/NavBar/NavBar.tsx";
 import TaskList from "@components/TaskList/TaskList.tsx";
 import { BoardT } from "@packages/types";
 
-interface BoardViewProps {
+interface TaskListPageProps {
   board: BoardT;
   onHomeClick: () => void;
 }
 
-const BoardView = ({ board, onHomeClick }: BoardViewProps) => {
+const TaskListPage = ({ board, onHomeClick }: TaskListPageProps) => {
   return (
     <div>
       <div className="mb-7">
@@ -18,4 +18,4 @@ const BoardView = ({ board, onHomeClick }: BoardViewProps) => {
   )
 }
 
-export default BoardView;
+export default TaskListPage;
