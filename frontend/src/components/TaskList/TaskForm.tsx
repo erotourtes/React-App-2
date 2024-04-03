@@ -101,7 +101,7 @@ const FormName = ({ onEditRequest }: { onEditRequest?: () => void }) => {
               {...field}
             />
           ) : (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap overflow-auto">
               <H3>{field.value}</H3>
               <Button
                 variant="outline"

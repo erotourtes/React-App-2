@@ -20,7 +20,7 @@ const AllHistoryList = ({ children, boardId }: AllHistoryListProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="p-0 min-w-[500px]">
+      <SheetContent className="p-0 min-w-[90vw] md:min-w-[500px] lg:min-w-[800px]">
         <SheetHeader>
           <SheetTitle className="bg-primary text-primary-foreground px-3 py-4 text-left">
             History
