@@ -1,7 +1,6 @@
 import {
   useCreateBoardMutation,
   useDeleteBoardMutation,
-  useGetAllBoardsQuery,
   useUpdateBoardMutation
 } from "@redux/api/hooks.ts";
 import { H3 } from "@components/typography.tsx";
@@ -10,9 +9,9 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { CreateNewBoardDialog } from "@components/Board/CreateNewBoardDialog.tsx";
 import { Board } from "@components/Board/Board.tsx";
+import { BoardT } from "@packages/types";
 
-const BoardSelectPage = ({ onSelect }: { onSelect: (id: number) => void }) => {
-  const { data: boards = [] } = useGetAllBoardsQuery();
+const BoardSelectPage = ({ boards, onSelect }: { boards: BoardT[], onSelect: (id: number) => void }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [createBoard] = useCreateBoardMutation()
 
