@@ -1,6 +1,6 @@
 import { Toaster } from "sonner";
 import "./App.css";
-import BoardSelectPage from "@components/Board/BoardSelectPage.tsx";
+import BoardPage from "@components/Board/BoardPage.tsx";
 import { useState } from "react";
 import { useGetAllBoardsQuery } from "@redux/api/hooks.ts";
 import TaskListPage from "@components/TaskList/TaskListPage.tsx";
@@ -15,7 +15,7 @@ function App() {
       <div className="container p-5">
         {selectedBoard
           ? <TaskListPage board={selectedBoard} onHomeClick={() => setBoardId(0)}/>
-          : <BoardSelectPage boards={boards} onSelect={setBoardId}/>
+          : <BoardPage boards={boards} onSelect={setBoardId}/>
         }
       </div>
       <Toaster/>

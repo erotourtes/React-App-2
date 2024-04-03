@@ -11,7 +11,7 @@ import { CreateNewBoardDialog } from "@components/Board/CreateNewBoardDialog.tsx
 import { Board } from "@components/Board/Board.tsx";
 import { BoardT } from "@packages/types";
 
-const BoardSelectPage = ({ boards, onSelect }: { boards: BoardT[], onSelect: (id: number) => void }) => {
+const BoardPage = ({ boards, onSelect }: { boards: BoardT[], onSelect: (id: number) => void }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [createBoard] = useCreateBoardMutation()
 
@@ -50,4 +50,4 @@ const BoardSelectPage = ({ boards, onSelect }: { boards: BoardT[], onSelect: (id
   )
 }
 
-export default BoardSelectPage;
+export default BoardPage;
