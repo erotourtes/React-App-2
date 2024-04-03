@@ -38,7 +38,7 @@ const BoardPage = ({ boards, onSelect }: { boards: BoardT[], onSelect: (id: numb
         ))}
         <Card
           onClick={() => setDialogOpen(true)}
-          className={"w-[250px] h-[200px] flex justify-center items-center hover:bg-primary hover:text-primary-foreground transition-colors"}>
+          className={"w-[250px] h-[200px] flex justify-center items-center border-dashed hover:border-0 hover:border-primary  border-2 hover:bg-primary hover:text-primary-foreground transition-colors"}>
           <Plus size={75}/>
         </Card>
       </div>
