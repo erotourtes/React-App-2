@@ -1,5 +1,6 @@
 import { HistoryActionType } from '@packages/types';
 import { Board } from 'src/board/board.entity';
+import { Task } from 'src/tasks/tasks.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -20,13 +21,10 @@ export class History {
     type: 'enum',
     enum: HistoryActionType,
   })
-  actionType: string;
+  actionType: HistoryActionType;
 
   @CreateDateColumn()
   timestamp: Date;
-
-  @Column({ length: 128 })
-  tableName: string;
 
   @Column({ length: 20, default: '' })
   fieldName: string;
@@ -36,6 +34,10 @@ export class History {
 
   @Column({ length: 128, nullable: true })
   newValue: string;
+
+  @ManyToOne(() => Task, (task) => task.histories, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'recordId' })
+  task: Task;
 
   @Column()
   recordId: number;

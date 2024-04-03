@@ -27,19 +27,17 @@ const AllHistoryList = ({ children, boardId }: AllHistoryListProps) => {
           </SheetTitle>
           {isLoading && (
             <Skeleton className="p-3 space-y-3">
-              <div className="h-5 bg-gray-300 rounded-md" />
-              <div className="h-5 bg-gray-300 rounded-md" />
-              <div className="h-5 bg-gray-300 rounded-md" />
+              <div className="h-5 bg-gray-300 rounded-md"/>
+              <div className="h-5 bg-gray-300 rounded-md"/>
+              <div className="h-5 bg-gray-300 rounded-md"/>
             </Skeleton>
           )}
           <div className="p-3 text-left h-[calc(100vh-70px)] space-y-5 overflow-auto">
             {historyList.map((history) =>
-              history.tableName === "task" ? (
-                <div key={history.id} className="overflow-auto">
-                  Task({history.name}):
-                  <TaskHistory history={history} />
-                </div>
-              ) : null
+              <div key={history.id} className="overflow-auto">
+                Task({history.task.name}):
+                <TaskHistory history={history}/>
+              </div>
             )}
           </div>
         </SheetHeader>

@@ -28,6 +28,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
   afterInsert(event: InsertEvent<Task>) {
     this.historyService.create({
       actionType: HistoryActionType.CREATE,
+      taskName: event.entity.name,
       recordId: event.entity.id,
       boardId: event.entity.list.boardId,
     });
@@ -41,6 +42,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
     if (isListChanged) {
       this.historyService.create({
         actionType: HistoryActionType.UPDATE,
+        taskName: newTask.name,
         fieldName: 'list',
         oldValue: event.databaseEntity.list.id.toString(),
         newValue: newTask.list.id.toString(),
@@ -53,6 +55,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
     for (const [, value] of updated) {
       this.historyService.create({
         actionType: HistoryActionType.UPDATE,
+        taskName: newTask.name,
         fieldName: <keyof Task>value.databaseName,
         oldValue: event.databaseEntity[value.databaseName],
         newValue: newTask[value.databaseName],
@@ -65,6 +68,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
   handleRemove(entity: Task) {
     this.historyService.create({
       actionType: HistoryActionType.DELETE,
+      taskName: entity.name,
       recordId: entity.id,
       boardId: entity.list.boardId,
     });

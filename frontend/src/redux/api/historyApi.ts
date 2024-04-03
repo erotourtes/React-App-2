@@ -13,7 +13,7 @@ export const historyApi = api.injectEndpoints({
       onCacheEntryAdded: async (_, { dispatch }) => {
         wsService.on<HistoryT>("history:task:new", (history) => {
           dispatch(historyApi.util.updateQueryData("getAllHistory", history.boardId,
-            (draft) => draft?.push(history)
+            (draft) => void draft?.push(history)
           ));
         });
       },
@@ -26,7 +26,7 @@ export const historyApi = api.injectEndpoints({
           dispatch(
             historyApi.util.updateQueryData(
               "getHistoryForTask",
-              +data.recordId,
+              data.recordId,
               (tasks) => tasks.concat(data)
             )
           );

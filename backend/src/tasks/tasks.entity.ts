@@ -3,10 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaskList } from 'src/task-lists/task-lists.entity';
 import { TaskPriority } from '@packages/types';
+import { History } from 'src/history/history.entity';
 
 @Entity('task')
 export class Task {
@@ -33,4 +35,9 @@ export class Task {
   })
   @JoinColumn({ name: 'listId' })
   list: TaskList;
+
+  @OneToMany(() => History, (history) => history.recordId, {
+    onDelete: 'SET NULL',
+  })
+  histories: History[];
 }
