@@ -9,11 +9,11 @@ export const historyApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllHistory: builder.query<HistoryT[], number>({
       query: (boardId: number) => `history/tasks?boardId=${boardId}`,
-      onCacheEntryAdded: async (_, { updateCachedData }) => {
-        wsService.on<HistoryT>("history:task:new", (data) => {
-          updateCachedData((draft) => {
-            draft?.push(data);
-          });
+      onCacheEntryAdded: async (_, { dispatch }) => {
+        wsService.on<HistoryT>("history:task:new", (history) => {
+          dispatch(historyApi.util.updateQueryData("getAllHistory", history.boardId,
+            (draft) => draft?.push(history)
+          ));
         });
       },
     }),
