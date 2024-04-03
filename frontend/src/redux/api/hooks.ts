@@ -23,4 +23,6 @@ export const {
   useGetAllBoardsQuery,
   useGetBoardListsQuery,
   useCreateBoardMutation,
+  useDeleteBoardMutation,
+  useUpdateBoardMutation,
 } = boardApi

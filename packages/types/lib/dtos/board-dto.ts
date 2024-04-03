@@ -5,6 +5,11 @@ export class CreateBoardDto {
   name: string;
 }
 
+export class UpdateBoardDto {
+  @MaxLength(128)
+  name: string;
+}
+
 export type BoardT = {
   id: number;
   name: string;

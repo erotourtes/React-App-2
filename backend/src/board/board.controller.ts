@@ -1,6 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { BoardService } from './board.service';
-import { BoardT, CreateBoardDto, TaskListT } from '@packages/types';
+import {
+  BoardT,
+  CreateBoardDto,
+  TaskListT,
+  UpdateBoardDto,
+} from '@packages/types';
 
 @Controller('board')
 export class BoardController {
@@ -19,6 +32,11 @@ export class BoardController {
   @Post()
   async create(@Body() board: CreateBoardDto): Promise<BoardT> {
     return this.boardService.create(board);
+  }
+
+  @Patch()
+  async update(@Body() board: UpdateBoardDto) {
+    return this.boardService.update(board);
   }
 
   @Delete(':id')

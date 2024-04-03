@@ -3,7 +3,7 @@ import { Board } from './board.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TaskListsService } from 'src/task-lists/task-lists.service';
-import { CreateBoardDto } from '@packages/types';
+import { CreateBoardDto, UpdateBoardDto } from '@packages/types';
 
 @Injectable()
 export class BoardService {
@@ -27,6 +27,10 @@ export class BoardService {
   }
 
   async create(board: CreateBoardDto) {
+    return await this.boardRepository.save(board);
+  }
+
+  async update(board: UpdateBoardDto) {
     return await this.boardRepository.save(board);
   }
 
