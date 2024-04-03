@@ -5,13 +5,19 @@ export enum HistoryActionType {
 }
 
 export type HistoryT = {
-  id: string;
+  id: number;
   actionType: HistoryActionType;
   timestamp: string;
-  tableName: string;
   fieldName: string;
   oldValue?: string;
   newValue?: string;
-  recordId: string;
-  name: string;
+  recordId: number;
+  boardId: number;
+  task: {
+    name: string;
+  };
+};
+
+export type HistoryServerT = {
+  [K in keyof HistoryT]: K extends "timestamp" ? Date : HistoryT[K];
 };

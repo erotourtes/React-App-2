@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@packages/types": "*",
     "@radix-ui/react-alert-dialog": "^1.0.5",
+    "@radix-ui/react-context-menu": "^2.1.5",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "^2.0.2",
@@ -21,7 +23,6 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@reduxjs/toolkit": "^2.2.2",
-    "@packages/types": "*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "class-variance-authority": "^0.7.0",

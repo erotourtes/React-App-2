@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Task } from '../tasks/tasks.entity';
+import { Board } from 'src/board/board.entity';
 
 @Entity('task_list')
 export class TaskList {
@@ -14,4 +22,11 @@ export class TaskList {
 
   @OneToMany(() => Task, (task) => task.list, { onDelete: 'CASCADE' })
   tasks: Task[];
+
+  @ManyToOne(() => Board, (board) => board.lists, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'boardId' })
+  board: Board;
+
+  @Column()
+  boardId: number;
 }

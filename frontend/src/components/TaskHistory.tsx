@@ -5,7 +5,7 @@ import { ReactElement } from "react";
 
 export const TaskHistory = ({ history }: { history: HistoryT }) => {
   return (
-    <li className="flex justify-between">
+    <li className="flex justify-between flex-wrap">
       <div>{actionRemapper[history.actionType](history)}</div>
       <span className="min-w-fit">{strDateFormatMAT(history.timestamp)}</span>
     </li>
@@ -15,13 +15,13 @@ export const TaskHistory = ({ history }: { history: HistoryT }) => {
 const actionRemapper: Record<HistoryActionType, (h: HistoryT) => ReactElement> =
   {
     [HistoryActionType.CREATE]: (history) => (
-      <p>You created task {value(history.name)}</p>
+      <p>You created task {value(history.task.name)}</p>
     ),
     [HistoryActionType.UPDATE]: (history) => (
       <p>{taskRemapper[history.fieldName as keyof TaskT](history)}</p>
     ),
     [HistoryActionType.DELETE]: (history) => (
-      <p>You deleted task {value(history.name)}</p>
+      <p>You deleted task {value(history.task.name)}</p>
     ),
   };
 

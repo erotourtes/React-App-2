@@ -13,7 +13,7 @@ import { inputChange } from "@/utils/utils";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
-const CreateNewList = () => {
+const CreateNewList = ({ boardId }: { boardId: number }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [createNewList] = useCreateNewListMutation();
 
@@ -27,7 +27,7 @@ const CreateNewList = () => {
         isOpen={isOpen}
         onDialogChange={setIsOpen}
         onDialogSubmit={(name) => {
-          createNewList({ name, tasksIds: [] });
+          createNewList({ name, tasksIds: [], boardId });
           setIsOpen(false);
         }}
       />

@@ -1,0 +1,14 @@
+GET http://localhost:3000/api/board
+
+###
+
+GET  http://localhost:3000/api/board/1
+
+###
+
+POST http://localhost:3000/api/board
+Content-Type: application/json
+
+{
+  "name": "Board name 1"
+}

@@ -1,0 +1,21 @@
+import { TaskList } from 'src/task-lists/task-lists.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { History } from '../history/history.entity';
+
+@Entity()
+export class Board {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ length: 128 })
+  name: string;
+
+  @Column({ default: false })
+  isDeleted: boolean;
+
+  @OneToMany(() => TaskList, (list) => list.board, { onDelete: 'CASCADE' })
+  lists: TaskList[];
+
+  @OneToMany(() => History, (history) => history.board, { onDelete: 'CASCADE' })
+  histories: History[];
+}

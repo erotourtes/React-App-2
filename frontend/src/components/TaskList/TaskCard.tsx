@@ -112,6 +112,7 @@ function TaskCard({
         <MoveToListSelect
           className="bg-secondary"
           selectedListId={selectedList.id}
+          boardId={selectedList.boardId}
           onSelect={(id) =>
             updateTask({ oldTask: task, updatedTask: { ...task, listId: id } })
           }
@@ -123,7 +124,7 @@ function TaskCard({
           isOpen={openDialog}
           onDialogChange={(open) => setOpenDialog(open)}
           task={task}
-          selectedListId={selectedList.id}
+          selectedList={selectedList}
           editMode={editMode}
         />
       )}

@@ -10,18 +10,20 @@ import { isValidIdFor } from "@/utils/utils";
 
 const MoveToListSelect = ({
   selectedListId,
+  boardId,
   onSelect,
   className,
   placeholder,
   disabled = false,
 }: {
   selectedListId: number;
+  boardId: number;
   onSelect: (id: number) => void;
   className?: string;
   placeholder?: string;
   disabled?: boolean;
 }) => {
-  const { data: taskList = [] } = useGetAllTaskListsQuery();
+  const { data: taskList = [] } = useGetAllTaskListsQuery(boardId);
   return (
     <Select onValueChange={(val) => onSelect(+val)}>
       <SelectTrigger disabled={disabled} className={`w-full ${className}`}>

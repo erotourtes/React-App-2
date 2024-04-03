@@ -7,6 +7,9 @@ export class CreateTaskListDto {
   @IsArray()
   @IsInt({ each: true })
   tasksIds: number[];
+
+  @IsInt()
+  boardId: number;
 }
 
 export class UpdateTaskListDto {
@@ -17,4 +20,5 @@ export class UpdateTaskListDto {
 export type TaskListT = {
   id: number;
   name: string;
+  boardId: number;
 }
