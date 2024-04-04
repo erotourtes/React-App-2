@@ -5,7 +5,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "../ui/sheet";
+} from "@components/ui/sheet.tsx";
 import { useGetAllHistoryQuery } from "@/redux/api/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 

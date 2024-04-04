@@ -1,4 +1,4 @@
-import NavBar from "@components/NavBar/NavBar.tsx";
+import NavBar from "@components/TaskList/NavBar/NavBar.tsx";
 import TaskList from "@components/TaskList/TaskList.tsx";
 import { BoardT } from "@packages/types";
 
@@ -10,9 +10,7 @@ interface TaskListPageProps {
 const TaskListPage = ({ board, onHomeClick }: TaskListPageProps) => {
   return (
     <div>
-      <div className="mb-7">
-        <NavBar onHomeClick={onHomeClick} board={board}/>
-      </div>
+      <NavBar onHomeClick={onHomeClick} board={board}/>
       <TaskList boardId={board.id}/>
     </div>
   )
