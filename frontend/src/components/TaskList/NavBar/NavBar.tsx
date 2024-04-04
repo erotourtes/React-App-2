@@ -1,8 +1,9 @@
-import AllHistoryList from "@/components/NavBar/AllHistoryList";
-import CreateNewList from "@/components/NavBar/CreateNewList";
+import AllHistoryList from "@/components/TaskList/NavBar/AllHistoryList";
+import CreateNewList from "@/components/TaskList/NavBar/CreateNewList";
 import { Button } from "@/components/ui/button";
 import { GalleryVerticalEnd, History } from "lucide-react";
-import { H3 } from "../typography";
+import { H3 } from "@components/typography.tsx";
+import NavBarC from "@components/NavBar.tsx"
 import { BoardT } from "@packages/types";
 
 interface NavBarProps {
@@ -12,7 +13,7 @@ interface NavBarProps {
 
 function NavBar({ board, onHomeClick }: NavBarProps) {
   return (
-    <nav className="flex flex-wrap justify-between items-center">
+    <NavBarC className={"mb-7"}>
       <Button variant={"ghost"} onClick={onHomeClick} className={"space-x-3 p-0"}>
         <GalleryVerticalEnd size={30}/>
         <H3>{board.name}</H3>
@@ -26,7 +27,7 @@ function NavBar({ board, onHomeClick }: NavBarProps) {
         </AllHistoryList>
         <CreateNewList boardId={board.id}/>
       </div>
-    </nav>
+    </NavBarC>
   );
 }
 
