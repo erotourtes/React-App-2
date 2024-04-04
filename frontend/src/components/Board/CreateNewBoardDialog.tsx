@@ -11,7 +11,7 @@ interface CreateNewBoardDialogProps {
   onDialogSubmit: (name: string) => void
 }
 
-export const CreateNewBoardDialog = (
+const CreateNewBoardDialog = (
   {
     isOpen,
     onDialogChange,

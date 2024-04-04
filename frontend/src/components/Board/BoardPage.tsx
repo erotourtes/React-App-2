@@ -7,7 +7,7 @@ import { H3 } from "@components/typography.tsx";
 import { Card } from "@components/ui/card.tsx";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { CreateNewBoardDialog } from "@components/Board/CreateNewBoardDialog.tsx";
+import CreateNewBoardDialog from "@components/Board/CreateNewBoardDialog.tsx";
 import { Board } from "@components/Board/Board.tsx";
 import { BoardT } from "@packages/types";
 
