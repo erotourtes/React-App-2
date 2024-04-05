@@ -25,7 +25,11 @@
     "strictPropertyInitialization": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
+    "types": [
+      "@testing-library/jest-dom"
+    ],
     "paths": {
       "@/*": [
         "./src/*"
@@ -39,7 +43,8 @@
     }
   },
   "include": [
-    "src"
+    "src",
+    "tests"
   ],
   "references": [
     {

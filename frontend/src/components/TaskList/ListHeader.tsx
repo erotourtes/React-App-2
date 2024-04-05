@@ -27,15 +27,7 @@ import {
   useUpdateNewListMutation,
 } from "@/redux/api/hooks";
 
-function ListHeader({
-  list,
-  taskCount,
-  disabled,
-}: {
-  list: TaskListT;
-  taskCount: number;
-  disabled?: boolean;
-}) {
+function ListHeader({ list, taskCount, disabled, }: { list: TaskListT; taskCount: number; disabled?: boolean; }) {
   const [open, setOpen] = useState(false);
   const [editDialog, setEditDialog] = useState(false);
   const [deleteListApi] = useDeleteNewListMutation();
@@ -59,25 +51,26 @@ function ListHeader({
         <p>{taskCount}</p>
         <DropdownMenu>
           <DropdownMenuTrigger
+            data-testid="list-header-ellipsis-menu"
             disabled={disabled}
             className="hover:bg-accent hover:text-accent-foreground rounded-sm"
           >
-            <EllipsisVertical />
+            <EllipsisVertical/>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => setEditDialog(true)}>
-              <PopupIcon icon={<Pencil />} />
+              <PopupIcon icon={<Pencil/>}/>
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setOpen(true)}>
-              <PopupIcon icon={<Plus />} />
+              <PopupIcon icon={<Plus/>}/>
               Add new card
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={(e) => e.preventDefault()}
               className="des-btn focus:des-btn-rev"
             >
-              <DeleteBtn onConfirm={deleteList} />
+              <DeleteBtn onConfirm={deleteList}/>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -105,7 +98,7 @@ const DeleteBtn = ({ onConfirm }: { onConfirm: () => void }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger className="flex w-full">
-        <PopupIcon icon={<Trash2 />} />
+        <PopupIcon icon={<Trash2/>}/>
         Delete
       </AlertDialogTrigger>
       <AlertDialogContent>
