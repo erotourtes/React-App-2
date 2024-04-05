@@ -5,7 +5,7 @@ const config = {
 };
 
 for (const key in config)
-  if (!config[key as keyof typeof config])
+  if (!config[key as keyof typeof config] && process.env.NODE_ENV !== "test")
     throw new Error(`Environment variable ${key} is not defined`);
 
 export default config;
