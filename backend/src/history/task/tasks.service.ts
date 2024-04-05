@@ -41,7 +41,7 @@ export class TaskHistoryService {
     await this.historyRepository.save(history);
 
     // Mutates the history object
-    await this.joinSingleListName(history);
+    if (record.fieldName === 'list') await this.joinSingleListName(history);
 
     this.taskGateway.sendHistoryUpdate({
       ...history,
