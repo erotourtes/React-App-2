@@ -26,14 +26,13 @@ export class TasksService {
   ) {}
 
   async findAll(listId?: number): Promise<TaskT[]> {
-    const query = this.taskRepository
-      .createQueryBuilder('task')
-      .select(['task', 'list.id'])
-      .where('task.isDeleted = false')
-      .leftJoin('task.list', 'list');
-    if (listId) query.andWhere('list.id = :id', { id: listId });
+    const tasks = await this.taskRepository.find({
+      select: { list: { id: true } },
+      where: { isDeleted: false, list: { id: listId } },
+      relations: { list: true },
+    });
 
-    return await query.getMany();
+    return tasks;
   }
 
   async findAllIdOnly(listId: number): Promise<{ id: number }[]> {
@@ -44,13 +43,15 @@ export class TasksService {
   }
 
   async findOne(id: number): Promise<TaskT> {
-    const query = this.taskRepository
-      .createQueryBuilder('task')
-      .select(['task', 'list.id'])
-      .leftJoin('task.list', 'list')
-      .where('task.id = :id', { id })
-      .andWhere('task.isDeleted = false');
-    return await query.getOne();
+    const task = await this.taskRepository.findOne({
+      select: { list: { id: true } },
+      where: { id, isDeleted: false },
+      relations: { list: true },
+    });
+
+    if (!task) throw new NotFoundException(`Task with id ${id} not found`);
+
+    return task;
   }
 
   async create(dto: CreateTaskDto): Promise<TaskT> {
@@ -68,6 +69,7 @@ export class TasksService {
   async update(taskId: number, task: UpdateTaskDto): Promise<TaskT> {
     const foundTask = await this.taskRepository.findOne({
       where: { id: taskId, isDeleted: false },
+      relations: { list: true },
     });
     if (!foundTask)
       throw new NotFoundException(`Task with id ${taskId} not found`);

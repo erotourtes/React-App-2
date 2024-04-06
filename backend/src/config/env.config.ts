@@ -2,6 +2,7 @@ export const envConfig = () => {
   const envFiles = {
     development: '.env.dev',
     production: '.env.local',
+    test: '.env.test',
     local: '',
   };
 

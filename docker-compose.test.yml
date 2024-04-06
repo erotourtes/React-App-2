@@ -1,0 +1,17 @@
+name: tasks
+
+services:
+  db_testing:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: Tasks_owner_Testing
+      POSTGRES_PASSWORD: Testing
+      POSTGRES_DB: Tasks_Testing
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_Testing:/var/lib/postgresql/data
+
+volumes:
+  pgdata_Testing:
