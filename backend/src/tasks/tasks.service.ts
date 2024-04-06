@@ -26,14 +26,13 @@ export class TasksService {
   ) {}
 
   async findAll(listId?: number): Promise<TaskT[]> {
-    const query = this.taskRepository
-      .createQueryBuilder('task')
-      .select(['task', 'list.id'])
-      .where('task.isDeleted = false')
-      .leftJoin('task.list', 'list');
-    if (listId) query.andWhere('list.id = :id', { id: listId });
+    const tasks = await this.taskRepository.find({
+      select: { list: { id: true } },
+      where: { isDeleted: false, list: { id: listId } },
+      relations: { list: true },
+    });
 
-    return await query.getMany();
+    return tasks;
   }
 
   async findAllIdOnly(listId: number): Promise<{ id: number }[]> {
