@@ -90,4 +90,18 @@ describe('TaskController', () => {
       },
     ]);
   });
+
+  it('should not return deleted task', async () => {
+    const { tasks0 } = await createTasks(dbSource);
+
+    const response = await request(app.getHttpServer()).delete(
+      `/tasks/${tasks0[0].id}`,
+    );
+    const task = await request(app.getHttpServer()).get(
+      `/tasks/${tasks0[0].id}`,
+    );
+
+    expect(response.status).toBe(404);
+    expect(task.body).toBeNull();
+  });
 });
