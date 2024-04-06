@@ -101,7 +101,8 @@ describe('TaskController', () => {
       `/tasks/${tasks0[0].id}`,
     );
 
-    expect(response.status).toBe(404);
-    expect(task.body).toBeNull();
+    expect(response.status).toBe(200);
+    expect(task.status).toBe(404);
+    expect(task.body).toHaveProperty('error');
   });
 });

@@ -43,13 +43,15 @@ export class TasksService {
   }
 
   async findOne(id: number): Promise<TaskT> {
-    const query = this.taskRepository
-      .createQueryBuilder('task')
-      .select(['task', 'list.id'])
-      .leftJoin('task.list', 'list')
-      .where('task.id = :id', { id })
-      .andWhere('task.isDeleted = false');
-    return await query.getOne();
+    const task = await this.taskRepository.findOne({
+      select: { list: { id: true } },
+      where: { id, isDeleted: false },
+      relations: { list: true },
+    });
+
+    if (!task) throw new NotFoundException(`Task with id ${id} not found`);
+
+    return task;
   }
 
   async create(dto: CreateTaskDto): Promise<TaskT> {
