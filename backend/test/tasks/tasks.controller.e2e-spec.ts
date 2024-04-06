@@ -30,6 +30,28 @@ const taskStab = (): Partial<Task>[] => [
   },
 ];
 
+const createTasks = async (dbSource: DataSource) => {
+  const boards = await dbSource.manager.save(Board, boardStab());
+  const lists = await dbSource.manager.save(
+    TaskList,
+    listStab().map((taskList) => ({ ...taskList, board: boards[0] })),
+  );
+  const tasks0 = await dbSource.manager.save(
+    Task,
+    taskStab().map((task) => ({ ...task, list: lists[0] })),
+  );
+  const tasks1 = await dbSource.manager.save(
+    Task,
+    taskStab().map((task) => ({ ...task, list: lists[1] })),
+  );
+  return {
+    boards,
+    lists,
+    tasks0,
+    tasks1,
+  };
+};
+
 describe('TaskController', () => {
   let app: INestApplication<any>;
   let dbSource: DataSource;
@@ -59,23 +81,12 @@ describe('TaskController', () => {
   });
 
   it('should return tasks', async () => {
-    const boards = await dbSource.manager.save(Board, boardStab());
-    const lists = await dbSource.manager.save(
-      TaskList,
-      listStab().map((taskList) => ({ ...taskList, board: boards[0] })),
-    );
-    await dbSource.manager.save(
-      Task,
-      taskStab().map((task) => ({ ...task, list: lists[0] })),
-    );
-    await dbSource.manager.save(
-      Task,
-      taskStab().map((task) => ({ ...task, list: lists[1] })),
-    );
+    const { lists } = await createTasks(dbSource);
 
     const response = await request(app.getHttpServer()).get(
       `/tasks?listId=${lists[0].id}`,
     );
+
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
       {
@@ -87,6 +98,30 @@ describe('TaskController', () => {
         dueDate: '2014-02-18',
         list: { id: lists[0].id },
       },
+      {
+        id: expect.any(Number),
+        isDeleted: false,
+        name: 'Task 2',
+        description: 'Description 2',
+        priority: TaskPriority.MEDIUM,
+        dueDate: null,
+        list: { id: lists[0].id },
+      },
+    ]);
+  });
+
+  it('should not return deleted tasks', async () => {
+    const { lists, tasks0 } = await createTasks(dbSource);
+
+    const response = await request(app.getHttpServer()).delete(
+      `/tasks/${tasks0[0].id}`,
+    );
+    const tasks = await request(app.getHttpServer()).get(
+      `/tasks?listId=${lists[0].id}`,
+    );
+
+    expect(response.status).toBe(200);
+    expect(tasks.body).toEqual([
       {
         id: expect.any(Number),
         isDeleted: false,
