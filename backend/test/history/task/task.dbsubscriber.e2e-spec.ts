@@ -9,10 +9,18 @@ import { TaskPriority } from '@packages/types';
 import { TaskHistoryDbSubscriber } from 'src/history/task/tasks.dbsubscriber';
 
 describe('TaskHistoryDbSubscriber', () => {
-  it('should create history insert record', async () => {
-    const ctx = new TestContext();
-    await ctx.setup();
+  let ctx: TestContext;
 
+  beforeEach(async () => {
+    ctx = new TestContext();
+    await ctx.setup();
+  });
+
+  afterEach(async () => {
+    await ctx.tearDown();
+  });
+
+  it('should create history insert record', async () => {
     const task = await ctx.createTask();
     await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
 
@@ -24,14 +32,9 @@ describe('TaskHistoryDbSubscriber', () => {
     expect(history[0]).toMatchObject({
       recordId: task.id,
     });
-
-    await ctx.tearDown();
   });
 
   it('should create history update records', async () => {
-    const ctx = new TestContext();
-    await ctx.setup();
-
     const task = await ctx.createTask();
 
     await ctx.response.patch(`/tasks/${task.id}`).send({
@@ -62,14 +65,9 @@ describe('TaskHistoryDbSubscriber', () => {
       oldValue: TaskPriority.MEDIUM,
       newValue: TaskPriority.HIGH,
     });
-
-    await ctx.tearDown();
   });
 
   it('should create delete history record when task is deleted', async () => {
-    const ctx = new TestContext();
-    await ctx.setup();
-
     const task = await ctx.createTask();
     await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
 
@@ -82,86 +80,8 @@ describe('TaskHistoryDbSubscriber', () => {
     expect(response.status).toBe(200);
     expect(history.length).toBe(2);
     expect(history[1]).toMatchObject({ actionType: 'delete' });
-
-    await ctx.tearDown();
   });
 });
-
-// test.concurrent('should create history insert record', async () => {
-//   const ctx = new TestContext();
-//   await ctx.setup();
-//
-//   const task = await ctx.createTask();
-//   await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
-//
-//   const response = await ctx.response.get(`/history/tasks/${task.id}`);
-//   const history = response.body;
-//
-//   expect(response.status).toBe(200);
-//   expect(history.length).toBe(1);
-//   expect(history[0]).toMatchObject({
-//     recordId: task.id,
-//   });
-//
-//   await ctx.tearDown();
-// });
-//
-// test.concurrent(
-//   'should create delete history record when task is deleted',
-//   async () => {
-//     const ctx = new TestContext();
-//     await ctx.setup();
-//
-//     const task = await ctx.createTask();
-//     await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
-//
-//     await ctx.response.delete(`/tasks/${task.id}`);
-//     await new Promise((resolve) => ctx.dbSubscriber.on('remove', resolve));
-//
-//     const response = await ctx.response.get(`/history/tasks/${task.id}`);
-//     const history = response.body;
-//
-//     expect(response.status).toBe(200);
-//     expect(history.length).toBe(2);
-//     expect(history[1]).toMatchObject({ actionType: 'delete' });
-//
-//     await ctx.tearDown();
-//   },
-// );
-
-// test.concurrent('should create history update records', async () => {
-//   const ctx = new TestContext();
-//   await ctx.setup();
-//
-//   const task = await ctx.createTask();
-//
-//   await ctx.response.patch(`/tasks/${task.id}`).send({
-//     name: 'Updated',
-//     // priority: TaskPriority.HIGH,
-//   });
-//
-//   await new Promise((resolve) => ctx.dbSubscriber.on('update', resolve));
-//
-//   const response = await ctx.response.get(`/history/tasks/${task.id}`);
-//   console.log(response.body);
-//
-//   // expect(response.status).toBe(200);
-//   // expect(history.length).toBe(3);
-//   // expect(history[0]).toMatchObject({
-//   //   recordId: task.id,
-//   //   actionType: 'INSERT',
-//   // });
-//   // expect(history[1]).toMatchObject({
-//   //   recordId: task.id,
-//   //   actionType: 'UPDATE',
-//   // });
-//   // expect(history[2]).toMatchObject({
-//   //   recordId: task.id,
-//   //   actionType: 'UPDATE',
-//   // });
-//
-//   await ctx.tearDown();
-// });
 
 class TestContext {
   app: INestApplication<any>;
