@@ -7,7 +7,7 @@ COPY . .
 RUN turbo prune backend --docker
 
 
-FROM base as runner
+FROM base as installer
 WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/package-lock.json ./package-lock.json
@@ -15,5 +15,17 @@ RUN npm install
  
 COPY --from=builder /app/out/full/ .
 RUN npx turbo run build --filter=backend...
+
+
+FROM base as runner
+WORKDIR /app
+
+RUN addgroup app && adduser -S -G app app
+USER app
+
+COPY --from=installer --chown=app:app /app/node_modules ./node_modules
+COPY --from=installer --chown=app:app /app/packages ./packages
+COPY --from=installer --chown=app:app /app/backend/dist ./backend/dist
+COPY --from=installer --chown=app:app /app/backend/package.json ./backend/package.json
 
 CMD ["npm", "run", "start:prod", "--prefix", "backend"]
