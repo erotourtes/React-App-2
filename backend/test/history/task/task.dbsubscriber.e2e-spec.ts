@@ -8,51 +8,160 @@ import { Board } from 'src/board/board.entity';
 import { TaskPriority } from '@packages/types';
 import { TaskHistoryDbSubscriber } from 'src/history/task/tasks.dbsubscriber';
 
-describe('Automatic History Creation', () => {
-  test.concurrent(
-    'should create history insert record',
-    async () => {
-      const ctx = new TestContext();
-      await ctx.setup();
+describe('TaskHistoryDbSubscriber', () => {
+  it('should create history insert record', async () => {
+    const ctx = new TestContext();
+    await ctx.setup();
 
-      const { body: board } = await request(ctx.httpServer)
-        .post(`/board`)
-        .send({
-          name: 'Board 1',
-        });
-      const { body: list } = await request(ctx.httpServer)
-        .post(`/task-lists`)
-        .send({
-          name: 'Task List 1',
-          boardId: board.id,
-        });
-      const { body: task } = await request(ctx.httpServer).post(`/tasks`).send({
-        name: 'Task 1',
-        description: 'Description 1',
-        priority: TaskPriority.MEDIUM,
-        listId: list.id,
-      });
+    const task = await ctx.createTask();
+    await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
 
-      await new Promise((resolve) =>
-        ctx.dbSubscriber.on('insert', (event) => resolve(event)),
-      );
+    const response = await ctx.response.get(`/history/tasks/${task.id}`);
+    const history = response.body;
 
-      const response = await request(ctx.httpServer).get(
-        `/history/tasks/${task.id}`,
-      );
-      const history = response.body;
+    expect(response.status).toBe(200);
+    expect(history.length).toBe(1);
+    expect(history[0]).toMatchObject({
+      recordId: task.id,
+    });
 
-      expect(response.status).toBe(200);
-      expect(history.length).toBe(1);
-      expect(history[0]).toMatchObject({
-        recordId: task.id,
-      });
+    await ctx.tearDown();
+  });
 
-      await ctx.tearDown();
-    },
-    10_000,
-  );
+  it('should create history update records', async () => {
+    const ctx = new TestContext();
+    await ctx.setup();
+
+    const task = await ctx.createTask();
+
+    await ctx.response.patch(`/tasks/${task.id}`).send({
+      name: 'Updated',
+      priority: TaskPriority.HIGH,
+    });
+
+    await new Promise((resolve) => ctx.dbSubscriber.on('update', resolve));
+
+    const response = await ctx.response.get(`/history/tasks/${task.id}`);
+    const history = response.body;
+
+    expect(response.status).toBe(200);
+    expect(history.length).toBe(3);
+
+    const nameUpdate = history.find((h) => h.fieldName === 'name');
+    expect(nameUpdate).toMatchObject({
+      recordId: task.id,
+      actionType: 'update',
+      oldValue: 'Task 1',
+      newValue: 'Updated',
+    });
+
+    const priorityUpdate = history.find((h) => h.fieldName === 'priority');
+    expect(priorityUpdate).toMatchObject({
+      recordId: task.id,
+      actionType: 'update',
+      oldValue: TaskPriority.MEDIUM,
+      newValue: TaskPriority.HIGH,
+    });
+
+    await ctx.tearDown();
+  });
+
+  it('should create delete history record when task is deleted', async () => {
+    const ctx = new TestContext();
+    await ctx.setup();
+
+    const task = await ctx.createTask();
+    await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
+
+    await ctx.response.delete(`/tasks/${task.id}`);
+    await new Promise((resolve) => ctx.dbSubscriber.on('remove', resolve));
+
+    const response = await ctx.response.get(`/history/tasks/${task.id}`);
+    const history = response.body;
+
+    expect(response.status).toBe(200);
+    expect(history.length).toBe(2);
+    expect(history[1]).toMatchObject({ actionType: 'delete' });
+
+    await ctx.tearDown();
+  });
 });
+
+// test.concurrent('should create history insert record', async () => {
+//   const ctx = new TestContext();
+//   await ctx.setup();
+//
+//   const task = await ctx.createTask();
+//   await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
+//
+//   const response = await ctx.response.get(`/history/tasks/${task.id}`);
+//   const history = response.body;
+//
+//   expect(response.status).toBe(200);
+//   expect(history.length).toBe(1);
+//   expect(history[0]).toMatchObject({
+//     recordId: task.id,
+//   });
+//
+//   await ctx.tearDown();
+// });
+//
+// test.concurrent(
+//   'should create delete history record when task is deleted',
+//   async () => {
+//     const ctx = new TestContext();
+//     await ctx.setup();
+//
+//     const task = await ctx.createTask();
+//     await new Promise((resolve) => ctx.dbSubscriber.on('insert', resolve));
+//
+//     await ctx.response.delete(`/tasks/${task.id}`);
+//     await new Promise((resolve) => ctx.dbSubscriber.on('remove', resolve));
+//
+//     const response = await ctx.response.get(`/history/tasks/${task.id}`);
+//     const history = response.body;
+//
+//     expect(response.status).toBe(200);
+//     expect(history.length).toBe(2);
+//     expect(history[1]).toMatchObject({ actionType: 'delete' });
+//
+//     await ctx.tearDown();
+//   },
+// );
+
+// test.concurrent('should create history update records', async () => {
+//   const ctx = new TestContext();
+//   await ctx.setup();
+//
+//   const task = await ctx.createTask();
+//
+//   await ctx.response.patch(`/tasks/${task.id}`).send({
+//     name: 'Updated',
+//     // priority: TaskPriority.HIGH,
+//   });
+//
+//   await new Promise((resolve) => ctx.dbSubscriber.on('update', resolve));
+//
+//   const response = await ctx.response.get(`/history/tasks/${task.id}`);
+//   console.log(response.body);
+//
+//   // expect(response.status).toBe(200);
+//   // expect(history.length).toBe(3);
+//   // expect(history[0]).toMatchObject({
+//   //   recordId: task.id,
+//   //   actionType: 'INSERT',
+//   // });
+//   // expect(history[1]).toMatchObject({
+//   //   recordId: task.id,
+//   //   actionType: 'UPDATE',
+//   // });
+//   // expect(history[2]).toMatchObject({
+//   //   recordId: task.id,
+//   //   actionType: 'UPDATE',
+//   // });
+//
+//   await ctx.tearDown();
+// });
 
 class TestContext {
   app: INestApplication<any>;
@@ -74,12 +183,30 @@ class TestContext {
     );
   }
 
+  async createTask() {
+    const { body: board } = await this.response.post(`/board`).send({
+      name: 'Board 1',
+    });
+    const { body: list } = await this.response.post(`/task-lists`).send({
+      name: 'Task List 1',
+      boardId: board.id,
+    });
+    const { body: task } = await this.response.post(`/tasks`).send({
+      name: 'Task 1',
+      description: 'Description 1',
+      priority: TaskPriority.MEDIUM,
+      listId: list.id,
+    });
+
+    return task;
+  }
+
   async tearDown() {
     await this.dbSource.manager.delete(Board, {});
     await this.app.close();
   }
 
-  get httpServer() {
-    return this.app.getHttpServer();
+  get response() {
+    return request(this.app.getHttpServer());
   }
 }
