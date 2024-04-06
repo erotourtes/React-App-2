@@ -11,7 +11,10 @@ import { Board } from 'src/board/board.entity';
 import { TaskHistoryDbSubscriber } from 'src/history/task/tasks.dbsubscriber';
 
 const boardStab = (): Partial<Board>[] => [{ name: 'Board 1' }];
-const listStab = (): Partial<TaskList>[] => [{ name: 'Task List 1' }];
+const listStab = (): Partial<TaskList>[] => [
+  { name: 'Task List 1' },
+  { name: 'Task List 2' },
+];
 
 const taskStab = (): Partial<Task>[] => [
   {
@@ -64,6 +67,10 @@ describe('TaskController', () => {
     await dbSource.manager.save(
       Task,
       taskStab().map((task) => ({ ...task, list: lists[0] })),
+    );
+    await dbSource.manager.save(
+      Task,
+      taskStab().map((task) => ({ ...task, list: lists[1] })),
     );
 
     const response = await request(app.getHttpServer()).get(
