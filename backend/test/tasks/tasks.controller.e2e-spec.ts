@@ -11,7 +11,7 @@ import { Board } from 'src/board/board.entity';
 import { TaskHistoryDbSubscriber } from 'src/history/task/tasks.dbsubscriber';
 
 const boardStab = (): Partial<Board>[] => [{ name: 'Board 1' }];
-const taskList = (): Partial<TaskList>[] => [{ name: 'Task List 1' }];
+const listStab = (): Partial<TaskList>[] => [{ name: 'Task List 1' }];
 
 const taskStab = (): Partial<Task>[] => [
   {
@@ -59,7 +59,7 @@ describe('TaskController', () => {
     const boards = await dbSource.manager.save(Board, boardStab());
     const lists = await dbSource.manager.save(
       TaskList,
-      taskList().map((taskList) => ({ ...taskList, board: boards[0] })),
+      listStab().map((taskList) => ({ ...taskList, board: boards[0] })),
     );
     await dbSource.manager.save(
       Task,
