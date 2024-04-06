@@ -28,7 +28,7 @@ export class TaskHistoryService {
     oldValue?: string;
     newValue?: string;
     recordId: number;
-    boardId?: number;
+    boardId: number;
   }) {
     const newRecord = this.historyRepository.create({
       ...record,
@@ -37,8 +37,14 @@ export class TaskHistoryService {
       fieldName: record.fieldName as string,
     });
 
-    const history = await this.historyRepository.save(newRecord);
-    await this.historyRepository.save(history);
+    const history = await this.historyRepository.save(newRecord).catch((e) => {
+      this.logger.error({
+        status: 'History record creation failed',
+        record,
+        error: e,
+      });
+      return null;
+    });
 
     // Mutates the history object
     if (record.fieldName === 'list') await this.joinSingleListName(history);
