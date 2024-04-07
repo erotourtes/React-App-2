@@ -1,13 +1,9 @@
 # Tasks
-> [!NOTE]
-> I noticed that the free hosting service might not save history or it takes a while to show up.
-> I rely on database events, and I guess it doesn't have much time and resources to process.
-> Therefore, using [Docker](#run-an-application-using-docker) is recommended.
 
 ## Run an application using Docker
 ```bash
 # Clone the repository
-git clone git@github.com:erotourtes/React-App.git && cd React-App
+git clone git@github.com:erotourtes/React-App-2.git && cd React-App-2
 
 docker compose up --build
 ```
@@ -27,4 +23,23 @@ docker compose up --build db
 
 # Build shared packages first
 npx turbo run build --filter="@packages/types" && npm start
+```
+
+## Testing
+### Nest integration tests
+```bash
+# Setup test database
+docker compose --file ./docker-compose.test.yml up --build
+
+npm run test:e2e --prefix backend
+```
+
+### React unit tests
+```bash
+npm test --prefix frontend
+```
+
+## Storybook
+```bash
+npm run storybook --prefix frontend
 ```
