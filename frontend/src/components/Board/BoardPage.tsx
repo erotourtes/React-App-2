@@ -11,7 +11,8 @@ import CreateNewBoardDialog from "@components/Board/CreateNewBoardDialog.tsx";
 import { Board } from "@components/Board/Board.tsx";
 import NavBar from "@components/NavBar.tsx";
 import { useNavigate } from "react-router-dom";
-import { toBoard } from "@components/Navigation/Navigation.tsx";
+
+import { toBoard } from "@components/Navigation/constants.ts";
 
 const BoardPage = () => {
   const { data: boards = [] } = useGetAllBoardsQuery();

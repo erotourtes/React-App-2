@@ -1,9 +1,9 @@
 import NavBar from "@components/TaskList/NavBar/NavBar.tsx";
 import TaskList from "@components/TaskList/TaskList.tsx";
 import { useNavigate, useParams } from "react-router-dom";
-import { toHome } from "@components/Navigation/Navigation.tsx";
 import { useGetBoardById } from "@redux/api/hooks.ts";
 import { useCallback } from "react";
+import { toHome } from "@components/Navigation/constants.ts";
 
 const TaskListPage = () => {
   const { boardId } = useParams()
