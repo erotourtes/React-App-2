@@ -7,7 +7,7 @@ export enum HistoryActionType {
 export type HistoryT = {
   id: number;
   actionType: HistoryActionType;
-  timestamp: string;
+  timestamp: string | Date;
   fieldName: string;
   oldValue?: string;
   newValue?: string;
@@ -16,8 +16,16 @@ export type HistoryT = {
   task: {
     name: string;
   };
-};
-
-export type HistoryServerT = {
-  [K in keyof HistoryT]: K extends "timestamp" ? Date : HistoryT[K];
-};
+} & (
+  | {
+      fieldName: "list";
+      data: {
+        oldListName: string;
+        newListName: string;
+      };
+    }
+  | {
+      fieldName: Exclude<string, "list">;
+      data: never;
+    }
+);

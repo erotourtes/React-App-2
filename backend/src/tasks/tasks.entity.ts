@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { TaskList } from 'src/task-lists/task-lists.entity';
 import { TaskPriority } from '@packages/types';
@@ -29,6 +30,9 @@ export class Task {
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
 
   @ManyToOne(() => TaskList, (taskList) => taskList.tasks, {
     onDelete: 'CASCADE',

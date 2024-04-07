@@ -12,7 +12,10 @@ export class BoardService {
   ) {}
 
   async findAll() {
-    return await this.boardRepository.find({ where: { isDeleted: false } });
+    return await this.boardRepository.find({
+      where: { isDeleted: false },
+      order: { createdAt: 'ASC' },
+    });
   }
 
   async create(board: CreateBoardDto) {

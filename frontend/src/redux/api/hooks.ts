@@ -1,4 +1,4 @@
-import { historyApi } from "@/redux/api/historyApi";
+import * as historyApi from "@/redux/api/historyApi";
 import { listsApi } from "@/redux/api/listsApi";
 import { tasksApi } from "@/redux/api/tasksApi";
 import { boardApi } from "@redux/api/boardApi.ts";
@@ -17,7 +17,8 @@ export const {
   useDeleteNewListMutation,
 } = listsApi;
 
-export const { useGetHistoryForTaskQuery, useGetAllHistoryQuery } = historyApi;
+export const { useGetAllHistoryQuery } = historyApi.historyApi;
+export const { useGetHistoryForTask } = historyApi;
 
 export const {
   useGetAllBoardsQuery,

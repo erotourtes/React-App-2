@@ -19,7 +19,7 @@ export const boardApi = api.injectEndpoints({
         const patchResult = dispatch(
           boardApi.util.updateQueryData("getAllBoards", undefined, (boards) => [
             ...boards,
-            { ...newBoard, id },
+            { ...newBoard, id, createdAt: new Date().toISOString() },
           ])
         );
         queryFulfilled.then(({ data: newBoard }) => {

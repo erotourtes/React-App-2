@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 import { HistoryActionType, History } from '../history.entity';
 import { TaskHistoryGateway } from './task.gateway';
-import { HistoryServerT } from '@packages/types';
+import { HistoryT } from '@packages/types';
 import { TaskList } from 'src/task-lists/task-lists.entity';
 
 @Injectable()
@@ -60,13 +60,15 @@ export class TaskHistoryService {
     });
   }
 
-  async findAll(boardId: number): Promise<HistoryServerT[]> {
+  async findAll(boardId: number): Promise<History[]> {
     const histories = await this.historyRepository.find({
       select: { task: { name: true } },
       where: { boardId },
       relations: { task: true },
+      order: { timestamp: 'ASC' },
     });
 
+    // Mutates the histories array
     await this.joinListNameFor(histories);
 
     return histories;
@@ -77,6 +79,7 @@ export class TaskHistoryService {
       select: { task: { name: true } },
       where: { recordId: id },
       relations: { task: true },
+      order: { timestamp: 'ASC' },
     });
 
     await this.joinListNameFor(histories);
@@ -94,7 +97,9 @@ export class TaskHistoryService {
     await Promise.all(promises);
   }
 
-  private async joinSingleListName(history: History) {
+  private async joinSingleListName(history: HistoryT) {
+    if (history.fieldName !== 'list') return;
+
     const oldList = await this.taskListRepository.findOne({
       select: { name: true },
       where: { id: +history.oldValue },
@@ -105,7 +110,9 @@ export class TaskHistoryService {
       where: { id: +history.newValue },
     });
 
-    history.oldValue = oldList?.name;
-    history.newValue = newList?.name;
+    history.data = {
+      oldListName: oldList?.name,
+      newListName: newList?.name,
+    };
   }
 }
