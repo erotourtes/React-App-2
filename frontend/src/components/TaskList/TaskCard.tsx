@@ -127,6 +127,7 @@ function TaskCardOrig({
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem
+              onClick={(e) => e.stopPropagation()}
               onSelect={onDeletePressed}
               className="des-btn focus:des-btn-rev"
             >
