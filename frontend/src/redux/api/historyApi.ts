@@ -3,6 +3,8 @@ import { api } from "@/redux/api/apiSlice";
 import { WebSocketService } from "@/redux/api/wsService";
 import { HistoryT, HistoryActionType } from "@packages/types";
 import { createSelector } from "@reduxjs/toolkit";
+import { useGetAllHistoryQuery } from "@redux/api/hooks.ts";
+import { useMemo } from "react";
 
 const wsService = WebSocketService.create(config.WS_URL);
 
@@ -30,15 +32,18 @@ export const historyApi = api.injectEndpoints({
   }),
 });
 
-const useSelectHistoryForTask = createSelector([state => state, (_, params) => params], (state: HistoryT[], params: {
-  taskId: number
-}) => {
-  state = state ?? [];
-  return state.filter((h) => h.recordId === params.taskId);
-})
-
 export const useGetHistoryForTask = (boardId: number, taskId: number) => {
-  const history = historyApi.useGetAllHistoryQuery(boardId);
-  return useSelectHistoryForTask(history.data, { taskId });
+  const selectTaskHistory = useMemo(() => createSelector(
+    res => res.data,
+    (_, boardId) => boardId,
+    (data: HistoryT[] | undefined) => data?.filter((h) => h.recordId === taskId) ?? null
+  ), [taskId])
+
+  return useGetAllHistoryQuery(boardId, {
+    selectFromResult: (result) => ({
+      ...result,
+      historyList: selectTaskHistory(result, boardId)
+    })
+  })
 }
 

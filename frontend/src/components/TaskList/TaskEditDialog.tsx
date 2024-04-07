@@ -30,7 +30,7 @@ const EditTaskDialog = ({
   if (!task) throw new Error("Task is required");
   const [isEdit, setIsEdit] = useState(editMode);
   const [update] = useUpdateTaskMutation();
-  const historyList = useGetHistoryForTask(selectedList.boardId, task.id);
+  const { historyList } = useGetHistoryForTask(selectedList.boardId, task.id);
 
   const onEditPressed = () => {
     onEditRequest?.call(null)
@@ -62,7 +62,7 @@ const EditTaskDialog = ({
         </div>
         <div className="p-5 bg-secondary min-h-full w-2/5 min-w-full md:min-w-[300px]">
           <H3>Task Action</H3>
-          <TaskHistoryList history={historyList}/>
+          <TaskHistoryList history={historyList || []}/>
         </div>
       </div>
     </MyDialog>
