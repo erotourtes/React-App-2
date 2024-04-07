@@ -10,14 +10,18 @@ import { useState } from "react";
 import CreateNewBoardDialog from "@components/Board/CreateNewBoardDialog.tsx";
 import { Board } from "@components/Board/Board.tsx";
 import NavBar from "@components/NavBar.tsx";
+import { useNavigate } from "react-router-dom";
+import { toBoard } from "@components/Navigation/Navigation.tsx";
 
 const BoardPage = () => {
   const { data: boards = [] } = useGetAllBoardsQuery();
   const [dialogOpen, setDialogOpen] = useState(false)
   const [createBoard] = useCreateBoardMutation()
-
   const [updateBoard] = useUpdateBoardMutation();
   const [deleteBoard] = useDeleteBoardMutation();
+  const navigate = useNavigate();
+
+  const onBoardClick = (boardId: number) => navigate(toBoard(boardId))
 
   const createBoardSubmit = (name: string) => {
     setDialogOpen(false)
@@ -30,7 +34,7 @@ const BoardPage = () => {
       <div className={"flex gap-3 flex-wrap"}>
         {boards.map((board) => (
           <Board
-            onClick={() => {}}
+            onClick={onBoardClick}
             onEdit={updateBoard}
             onDelete={deleteBoard}
             board={board}

@@ -1,7 +1,7 @@
 import * as historyApi from "@/redux/api/historyApi";
 import { listsApi } from "@/redux/api/listsApi";
 import { tasksApi } from "@/redux/api/tasksApi";
-import { boardApi } from "@redux/api/boardApi.ts";
+import * as boardApi from "@redux/api/boardApi.ts";
 
 export const {
   useGetTasksForListQuery,
@@ -25,4 +25,5 @@ export const {
   useCreateBoardMutation,
   useDeleteBoardMutation,
   useUpdateBoardMutation,
-} = boardApi
+} = boardApi.boardApi
+export const { useGetBoardById } = boardApi
