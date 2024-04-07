@@ -73,18 +73,16 @@ export const boardApi = api.injectEndpoints({
 
 
 export const useGetBoardById = (boardId: number) => {
-  const selectPostsForUser = useMemo(() => {
-    return createSelector(
-      res => res.data,
-      (_, boardId) => boardId,
-      (data: BoardT[] | undefined, boardId) => data?.find((b) => b.id === +boardId)
-    )
-  }, [])
+  const selectBoard = useMemo(() => createSelector(
+    res => res.data,
+    (_, boardId) => boardId,
+    (data: BoardT[] | undefined, boardId) => data?.find((b) => b.id === +boardId) ?? null
+  ), [])
 
   return useGetAllBoardsQuery(undefined, {
     selectFromResult: (result) => ({
       ...result,
-      board: selectPostsForUser(result, boardId)
+      board: selectBoard(result, boardId)
     })
   })
 }
