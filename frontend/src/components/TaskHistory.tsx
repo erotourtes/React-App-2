@@ -57,8 +57,8 @@ const taskRemapper: Record<
   list: (history: HistoryT) => {
     return (
       <span>
-        You moved task from list {value(history.oldValue)} to{" "}
-        {value(history.newValue)}
+        You moved task from list {value(history.data.oldListName)} to{" "}
+        {value(history.data.newListName)}
       </span>
     );
   },

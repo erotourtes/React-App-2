@@ -1,5 +1,5 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { HistoryServerT } from '@packages/types';
+import { HistoryT } from '@packages/types';
 import * as ws from 'ws';
 
 @WebSocketGateway({ path: '/ws', cors: true })
@@ -9,7 +9,7 @@ export class TaskHistoryGateway {
   @WebSocketServer()
   server: ws.Server;
 
-  sendHistoryUpdate(task: HistoryServerT) {
+  sendHistoryUpdate(task: HistoryT) {
     this.server.clients.forEach((client) => {
       client.send(
         JSON.stringify({

@@ -1,11 +1,13 @@
 import { api } from "@/redux/api/apiSlice";
 import {
   CreateTaskListDto,
+  HistoryT,
   TaskListT,
   UpdateTaskListDto,
 } from "@packages/types";
 import config from "@/config.ts";
 import { byCreatedAt } from "@/utils/utils.ts";
+import { historyApi } from "@redux/api/historyApi.ts";
 
 export const listsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -59,10 +61,31 @@ export const listsApi = api.injectEndpoints({
               lists.map((l) => (l.id === list.id ? { ...l, ...list } : l))
           )
         );
-        queryFulfilled.catch(() => {
-          console.log("Error updating list");
-          patchResult.undo();
-        });
+        queryFulfilled
+          .then(() => {
+            const renameHistoryList = (history: HistoryT) => {
+              if (history.fieldName === "list") {
+                if (+history.newValue! === list.id) history.data.newListName = list.name;
+                if (+history.oldValue! === list.id) history.data.oldListName = list.name;
+              }
+            }
+            dispatch(
+              historyApi.util.updateQueryData(
+                "getAllHistory",
+                list.boardId,
+                (draft) => void draft?.forEach(renameHistoryList))
+            )
+            dispatch(
+              historyApi.util.updateQueryData(
+                "getHistoryForTask",
+                list.boardId,
+                (draft) => void draft?.forEach(renameHistoryList))
+            )
+          })
+          .catch(() => {
+            console.log("Error updating list");
+            patchResult.undo();
+          });
       },
     }),
     deleteNewList: builder.mutation<void, TaskListT>({

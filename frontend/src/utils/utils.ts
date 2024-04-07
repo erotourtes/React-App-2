@@ -7,7 +7,7 @@ export const strDateFormat = (str?: string): string => {
  * @param str date string
  * @returns formatted date string. ex: Mar 27 at 6:48 PM
  */
-export const strDateFormatMAT = (str?: string): string => {
+export const strDateFormatMAT = (str?: string | Date): string => {
   if (!str) return "";
 
   const date = new Date(str);
