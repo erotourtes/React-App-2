@@ -63,6 +63,6 @@ export type TaskT = {
   description: string;
   dueDate?: string;
   priority: TaskPriority;
-  createdAt?: string | Date;
+  updatedAt?: string | Date;
   list: { id: number };
 };

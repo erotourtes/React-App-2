@@ -80,5 +80,5 @@ const taskRemapper: Record<
         {value(strDateFormat(history.newValue))}
       </span>
     ),
-  createdAt: () => <span></span>,
+  updatedAt: () => <span></span>,
 };

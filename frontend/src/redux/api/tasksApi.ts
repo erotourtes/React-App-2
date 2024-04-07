@@ -5,7 +5,6 @@ import {
   UpdateTaskDto,
 } from "@packages/types";
 import config from "@/config.ts";
-import { byCreatedAt } from "@/utils/utils.ts";
 
 export const tasksApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -59,7 +58,7 @@ export const tasksApi = api.injectEndpoints({
             tasksApi.util.updateQueryData(
               "getTasksForList",
               updatedTask.listId!,
-              (tasks) => [...tasks, newTask].sort(byCreatedAt)
+              (tasks) => [...tasks, newTask]
             )
           );
           queryFulfilled.catch(() => {
@@ -100,7 +99,6 @@ export const tasksApi = api.injectEndpoints({
         const newTask: TaskT = {
           id: randId,
           ...task,
-          createdAt: new Date().toISOString(),
           list: {
             id: task.listId,
           },
