@@ -1,6 +1,6 @@
 import {
   useCreateBoardMutation,
-  useDeleteBoardMutation,
+  useDeleteBoardMutation, useGetAllBoardsQuery,
   useUpdateBoardMutation
 } from "@redux/api/hooks.ts";
 import { H3 } from "@components/typography.tsx";
@@ -9,10 +9,10 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import CreateNewBoardDialog from "@components/Board/CreateNewBoardDialog.tsx";
 import { Board } from "@components/Board/Board.tsx";
-import { BoardT } from "@packages/types";
 import NavBar from "@components/NavBar.tsx";
 
-const BoardPage = ({ boards, onSelect }: { boards: BoardT[], onSelect: (id: number) => void }) => {
+const BoardPage = () => {
+  const { data: boards = [] } = useGetAllBoardsQuery();
   const [dialogOpen, setDialogOpen] = useState(false)
   const [createBoard] = useCreateBoardMutation()
 
@@ -29,11 +29,12 @@ const BoardPage = ({ boards, onSelect }: { boards: BoardT[], onSelect: (id: numb
       <NavBar className={"mb-7"}><H3>Boards</H3></NavBar>
       <div className={"flex gap-3 flex-wrap"}>
         {boards.map((board) => (
-          <Board onClick={onSelect}
-                 onEdit={updateBoard}
-                 onDelete={deleteBoard}
-                 board={board}
-                 key={board.id}/>
+          <Board
+            onClick={() => {}}
+            onEdit={updateBoard}
+            onDelete={deleteBoard}
+            board={board}
+            key={board.id}/>
         ))}
         <Card
           onClick={() => setDialogOpen(true)}
