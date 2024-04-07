@@ -1,6 +1,9 @@
 import { api } from "@/redux/api/apiSlice";
 import { BoardT, CreateBoardDto } from "@packages/types";
 import config from "@/config.ts";
+import { createSelector } from "@reduxjs/toolkit";
+import { useGetAllBoardsQuery } from "@redux/api/hooks.ts";
+import { useMemo } from "react";
 
 export const boardApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -67,3 +70,19 @@ export const boardApi = api.injectEndpoints({
     }),
   }),
 });
+
+
+export const useGetBoardById = (boardId: number) => {
+  const selectBoard = useMemo(() => createSelector(
+    res => res.data,
+    (_, boardId) => boardId,
+    (data: BoardT[] | undefined, boardId) => data?.find((b) => b.id === +boardId) ?? null
+  ), [])
+
+  return useGetAllBoardsQuery(undefined, {
+    selectFromResult: (result) => ({
+      ...result,
+      board: selectBoard(result, boardId)
+    })
+  })
+}

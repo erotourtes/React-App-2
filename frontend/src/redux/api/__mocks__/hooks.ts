@@ -15,6 +15,7 @@ const mockedModule: MockHooksT = {
   useGetAllBoardsQuery: jest.fn(() => ({ data: [] })),
   useGetAllHistoryQuery: jest.fn(() => ({ data: [] })),
   useGetHistoryForTask: jest.fn(() => []),
+  useGetBoardById: jest.fn(() => ({ data: [] })),
 };
 
 export const {
@@ -31,5 +32,6 @@ export const {
   useUpdateBoardMutation,
   useGetAllBoardsQuery,
   useGetAllHistoryQuery,
-  useGetHistoryForTask
+  useGetHistoryForTask,
+  useGetBoardById,
 } = mockedModule;

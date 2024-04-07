@@ -1,0 +1,15 @@
+@keyframes drawPath {
+    0% {
+        stroke-dashoffset: 100%;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.myPath {
+    stroke-dasharray: 100%;
+    stroke-dashoffset: 100%;
+    animation: drawPath 1.75s ease-in 4s alternate infinite;
+    animation-delay: 0s;
+}

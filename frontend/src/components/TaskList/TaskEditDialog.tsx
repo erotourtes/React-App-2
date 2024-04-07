@@ -25,11 +25,17 @@ const EditTaskDialog = ({
                           selectedList,
                           task,
                           editMode = true,
+                          onEditRequest,
                         }: Omit<TaskDialogProps, "onSubmit"> & { editMode: boolean }) => {
   if (!task) throw new Error("Task is required");
   const [isEdit, setIsEdit] = useState(editMode);
   const [update] = useUpdateTaskMutation();
-  const historyList = useGetHistoryForTask(selectedList.boardId, task.id);
+  const { historyList } = useGetHistoryForTask(selectedList.boardId, task.id);
+
+  const onEditPressed = () => {
+    onEditRequest?.call(null)
+    setIsEdit(true);
+  }
 
   const dialogChange = (open: boolean) => {
     setIsEdit(false);
@@ -49,14 +55,14 @@ const EditTaskDialog = ({
           <TaskForm
             onSubmit={submit}
             edit={isEdit}
-            onEditRequest={() => setIsEdit(true)}
+            onEditRequest={onEditPressed}
             task={task}
             selectedList={selectedList}
           />
         </div>
         <div className="p-5 bg-secondary min-h-full w-2/5 min-w-full md:min-w-[300px]">
           <H3>Task Action</H3>
-          <TaskHistoryList history={historyList}/>
+          <TaskHistoryList history={historyList || []}/>
         </div>
       </div>
     </MyDialog>
