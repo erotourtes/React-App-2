@@ -93,6 +93,7 @@ export class TasksService {
     const task = await this.taskRepository.findOne({
       select: {
         id: true,
+        name: true,
         list: { id: true, boardId: true },
       },
       where: { id },
