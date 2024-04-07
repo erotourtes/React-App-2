@@ -3,16 +3,20 @@ import TaskList from "@components/TaskList/TaskList.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetBoardById } from "@redux/api/hooks.ts";
 import { useCallback } from "react";
-import { toHome } from "@components/Navigation/constants.ts";
+import { toError, toHome } from "@components/Navigation/constants.ts";
 
 const TaskListPage = () => {
   const { boardId } = useParams()
   if (!boardId) throw new Error("No board id provided")
   const navigate = useNavigate()
   const onHomeClick = useCallback(() => navigate(toHome()), [navigate])
-  const { board } = useGetBoardById(+boardId)
+  const { board, isFetching, isLoading } = useGetBoardById(+boardId)
 
-  if (!board) return <div>Loading...</div>
+  if (isFetching || isLoading) return <></>
+  if (board === null) return void navigate(toError(), {
+    replace: true,
+    state: { message: `Board with id ${boardId} not found` }
+  })
 
   return (
     <div>
