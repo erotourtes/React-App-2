@@ -6,10 +6,11 @@ import { useEffect, useState } from "react";
 import { toHome } from "@components/Navigation/constants.ts";
 
 const ErrorPage = () => {
-  const { state } = useLocation()
   const navigate = useNavigate()
   const [seconds, setSeconds] = useState(15)
-  state.message = state.message || "An error occurred"
+  let { state } = useLocation()
+  state = state || {}
+  state.message = state.message || "Page not found"
 
   useEffect(() => {
     const interval = setInterval(() => {
