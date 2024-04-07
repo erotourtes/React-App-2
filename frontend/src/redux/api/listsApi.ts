@@ -6,7 +6,6 @@ import {
   UpdateTaskListDto,
 } from "@packages/types";
 import config from "@/config.ts";
-import { byCreatedAt } from "@/utils/utils.ts";
 import { historyApi } from "@redux/api/historyApi.ts";
 
 export const listsApi = api.injectEndpoints({
@@ -27,7 +26,7 @@ export const listsApi = api.injectEndpoints({
           listsApi.util.updateQueryData(
             "getAllTaskLists",
             list.boardId,
-            (lists) => [...lists, { ...list, id: randId, createdAt: new Date().toISOString() }].sort(byCreatedAt)
+            (lists) => [...lists, { ...list, id: randId }]
           )
         );
         queryFulfilled
