@@ -75,12 +75,6 @@ export const listsApi = api.injectEndpoints({
                 list.boardId,
                 (draft) => void draft?.forEach(renameHistoryList))
             )
-            dispatch(
-              historyApi.util.updateQueryData(
-                "getHistoryForTask",
-                list.boardId,
-                (draft) => void draft?.forEach(renameHistoryList))
-            )
           })
           .catch(() => {
             console.log("Error updating list");

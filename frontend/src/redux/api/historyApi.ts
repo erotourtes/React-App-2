@@ -2,6 +2,7 @@ import config from "@/config";
 import { api } from "@/redux/api/apiSlice";
 import { WebSocketService } from "@/redux/api/wsService";
 import { HistoryT, HistoryActionType } from "@packages/types";
+import { createSelector } from "@reduxjs/toolkit";
 
 const wsService = WebSocketService.create(config.WS_URL);
 
@@ -26,20 +27,18 @@ export const historyApi = api.injectEndpoints({
         });
       },
     }),
-    getHistoryForTask: builder.query<HistoryT[], number>({
-      keepUnusedDataFor: config.CACHE_TIME,
-      query: (taskId) => `history/tasks/${taskId}`,
-      onCacheEntryAdded: async (_, { dispatch }) => {
-        wsService.on<HistoryT>("history:task:new", (data) => {
-          dispatch(
-            historyApi.util.updateQueryData(
-              "getHistoryForTask",
-              data.recordId,
-              (tasks) => tasks.concat(data)
-            )
-          );
-        });
-      },
-    }),
   }),
 });
+
+const useSelectHistoryForTask = createSelector([state => state, (_, params) => params], (state: HistoryT[], params: {
+  taskId: number
+}) => {
+  state = state ?? [];
+  return state.filter((h) => h.recordId === params.taskId);
+})
+
+export const useGetHistoryForTask = (boardId: number, taskId: number) => {
+  const history = historyApi.useGetAllHistoryQuery(boardId);
+  return useSelectHistoryForTask(history.data, { taskId });
+}
+

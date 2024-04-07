@@ -1,9 +1,8 @@
 import MyDialog from "@/components/MyDialog";
 import { TaskForm } from "@/components/TaskList/TaskForm";
 import { H3 } from "@/components/typography";
-import { useGetHistoryForTaskQuery } from "@/redux/api/hooks";
 import {
-  useCreateNewTaskMutation,
+  useCreateNewTaskMutation, useGetHistoryForTask,
   useUpdateTaskMutation,
 } from "@/redux/api/hooks";
 import { CreateTaskDto, TaskListT, TaskT } from "@packages/types";
@@ -30,7 +29,7 @@ const EditTaskDialog = ({
   if (!task) throw new Error("Task is required");
   const [isEdit, setIsEdit] = useState(editMode);
   const [update] = useUpdateTaskMutation();
-  const { data: historyList = [] } = useGetHistoryForTaskQuery(task.id);
+  const historyList = useGetHistoryForTask(selectedList.boardId, task.id);
 
   const dialogChange = (open: boolean) => {
     setIsEdit(false);
