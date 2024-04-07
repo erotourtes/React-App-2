@@ -53,6 +53,7 @@ describe('TaskController', () => {
         description: 'Description 1',
         priority: TaskPriority.LOW,
         dueDate: '2014-02-18',
+        updatedAt: expect.any(String),
         list: { id: lists[0].id },
       },
       {
@@ -62,6 +63,7 @@ describe('TaskController', () => {
         description: 'Description 2',
         priority: TaskPriority.MEDIUM,
         dueDate: null,
+        updatedAt: expect.any(String),
         list: { id: lists[0].id },
       },
     ]);
@@ -86,6 +88,7 @@ describe('TaskController', () => {
         description: 'Description 2',
         priority: TaskPriority.MEDIUM,
         dueDate: null,
+        updatedAt: expect.any(String),
         list: { id: lists[0].id },
       },
     ]);
