@@ -1,7 +1,7 @@
 import config from "@/config";
 import { api } from "@/redux/api/apiSlice";
 import { WebSocketService } from "@/redux/api/wsService";
-import { HistoryT } from "@packages/types";
+import { HistoryT, HistoryActionType } from "@packages/types";
 
 const wsService = WebSocketService.create(config.WS_URL);
 
@@ -13,7 +13,15 @@ export const historyApi = api.injectEndpoints({
       onCacheEntryAdded: async (_, { dispatch }) => {
         wsService.on<HistoryT>("history:task:new", (history) => {
           dispatch(historyApi.util.updateQueryData("getAllHistory", history.boardId,
-            (draft) => void draft?.push(history)
+            (draft) => {
+              draft = draft ?? [];
+              if (history.actionType === HistoryActionType.UPDATE && history.fieldName === "name") {
+                draft
+                  .filter((t) => t.recordId === history.recordId)
+                  .forEach((t) => t.task.name = history.newValue ?? "");
+              }
+              draft?.push(history)
+            }
           ));
         });
       },
