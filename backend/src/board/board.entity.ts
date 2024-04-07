@@ -1,5 +1,11 @@
 import { TaskList } from 'src/task-lists/task-lists.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { History } from '../history/history.entity';
 
 @Entity()
@@ -15,6 +21,9 @@ export class Board {
 
   @OneToMany(() => TaskList, (list) => list.board, { onDelete: 'CASCADE' })
   lists: TaskList[];
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 
   @OneToMany(() => History, (history) => history.board, { onDelete: 'CASCADE' })
   histories: History[];

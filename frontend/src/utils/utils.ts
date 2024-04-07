@@ -23,8 +23,17 @@ export const strDateFormatMAT = (str?: string): string => {
 
 export const inputChange =
   (setInput: (str: string) => void) =>
-  (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
-  };
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setInput(event.target.value);
+    };
 
 export const isValidIdFor = ({ id }: { id: number }) => id >= 0;
+
+/*
+  * Sort by createdAt date
+ */
+export const byCreatedAt = (a: { createdAt?: string | Date }, b: { createdAt?: string | Date }) => {
+  if (!a.createdAt) return 1;
+  if (!b.createdAt) return -1;
+  return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+}

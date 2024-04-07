@@ -5,6 +5,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 import { Task } from '../tasks/tasks.entity';
 import { Board } from 'src/board/board.entity';
@@ -19,6 +20,9 @@ export class TaskList {
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 
   @OneToMany(() => Task, (task) => task.list, { onDelete: 'CASCADE' })
   tasks: Task[];

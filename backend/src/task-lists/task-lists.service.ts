@@ -26,6 +26,7 @@ export class TaskListsService {
   async findAll(boardId: number): Promise<TaskListT[]> {
     return this.taskListsRepository.find({
       where: { isDeleted: false, boardId },
+      order: { createdAt: 'ASC' },
     });
   }
 

@@ -21,4 +21,5 @@ export type TaskListT = {
   id: number;
   name: string;
   boardId: number;
+  createdAt?: string | Date;
 }

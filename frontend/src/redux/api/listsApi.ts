@@ -5,6 +5,7 @@ import {
   UpdateTaskListDto,
 } from "@packages/types";
 import config from "@/config.ts";
+import { byCreatedAt } from "@/utils/utils.ts";
 
 export const listsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -24,7 +25,7 @@ export const listsApi = api.injectEndpoints({
           listsApi.util.updateQueryData(
             "getAllTaskLists",
             list.boardId,
-            (lists) => [...lists, { ...list, id: randId }]
+            (lists) => [...lists, { ...list, id: randId, createdAt: new Date().toISOString() }].sort(byCreatedAt)
           )
         );
         queryFulfilled

@@ -65,6 +65,7 @@ export class TaskHistoryService {
       select: { task: { name: true } },
       where: { boardId },
       relations: { task: true },
+      order: { timestamp: 'ASC' },
     });
 
     await this.joinListNameFor(histories);
@@ -77,6 +78,7 @@ export class TaskHistoryService {
       select: { task: { name: true } },
       where: { recordId: id },
       relations: { task: true },
+      order: { timestamp: 'ASC' },
     });
 
     await this.joinListNameFor(histories);

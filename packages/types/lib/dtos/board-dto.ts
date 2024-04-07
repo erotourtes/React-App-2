@@ -13,4 +13,5 @@ export class UpdateBoardDto {
 export type BoardT = {
   id: number;
   name: string;
+  createdAt?: string | Date;
 };

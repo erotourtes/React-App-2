@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -29,6 +30,9 @@ export class Task {
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 
   @ManyToOne(() => TaskList, (taskList) => taskList.tasks, {
     onDelete: 'CASCADE',

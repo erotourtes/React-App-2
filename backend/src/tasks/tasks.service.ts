@@ -30,6 +30,7 @@ export class TasksService {
       select: { list: { id: true } },
       where: { isDeleted: false, list: { id: listId } },
       relations: { list: true },
+      order: { createdAt: 'ASC' },
     });
 
     return tasks;
