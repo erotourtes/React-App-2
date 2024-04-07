@@ -5,19 +5,22 @@ import { GalleryVerticalEnd, History } from "lucide-react";
 import { H3 } from "@components/typography.tsx";
 import NavBarC from "@components/NavBar.tsx"
 import { BoardT } from "@packages/types";
+import { Link } from "react-router-dom";
+import { toHome } from "@components/Navigation/constants.ts";
 
 interface NavBarProps {
   board: BoardT;
-  onHomeClick: () => void;
 }
 
-function NavBar({ board, onHomeClick }: NavBarProps) {
+function NavBar({ board }: NavBarProps) {
   return (
     <NavBarC className={"mb-7"}>
-      <Button variant={"ghost"} onClick={onHomeClick} className={"space-x-3 p-0"}>
-        <GalleryVerticalEnd size={30}/>
-        <H3>{board.name}</H3>
-      </Button>
+      <Link to={toHome()}>
+        <Button variant={"ghost"} className={"space-x-3 p-0"}>
+          <GalleryVerticalEnd size={30}/>
+          <H3>{board.name}</H3>
+        </Button>
+      </Link>
       <div className="space-x-0 md:space-x-5 flex flex-wrap md:flex-nowrap">
         <AllHistoryList boardId={board.id}>
           <Button variant="outline" className="gap-2">
