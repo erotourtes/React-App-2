@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    base: "/React-App/",
+    base: "/React-App",
     optimizeDeps: {
       include: ["@packages/types"],
     },
