@@ -12,7 +12,7 @@ export const historyApi = api.injectEndpoints({
       query: (boardId: number) => `history/tasks?boardId=${boardId}`,
       keepUnusedDataFor: config.CACHE_TIME,
       onCacheEntryAdded: async (_, { dispatch, cacheEntryRemoved, cacheDataLoaded }) => {
-        const wsService = WebSocketService.create(config.WS_URL);
+        const wsService = WebSocketService.getInstance(config.WS_URL);
         await cacheDataLoaded
 
         wsService.on<HistoryT>("history:task:new", (history) => {
