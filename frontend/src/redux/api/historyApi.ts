@@ -6,19 +6,19 @@ import { createSelector } from "@reduxjs/toolkit";
 import { useGetAllHistoryQuery } from "@redux/api/hooks.ts";
 import { useMemo } from "react";
 
-const wsService = WebSocketService.create(config.WS_URL);
-
 export const historyApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllHistory: builder.query<HistoryT[], number>({
       query: (boardId: number) => `history/tasks?boardId=${boardId}`,
       keepUnusedDataFor: config.CACHE_TIME,
-      onCacheEntryAdded: async (_, { dispatch }) => {
+      onCacheEntryAdded: async (_, { dispatch, cacheEntryRemoved, cacheDataLoaded }) => {
+        const wsService = WebSocketService.create(config.WS_URL);
+        await cacheDataLoaded
+
         wsService.on<HistoryT>("history:task:new", (history) => {
           dispatch(historyApi.util.updateQueryData("getAllHistory", history.boardId,
             (draft) => {
-              draft = draft ?? [];
-              if (history.actionType === HistoryActionType.UPDATE && history.fieldName === "name") {
+              if (history.actionType === HistoryActionType.UPDATE && history.fieldName === "name" && draft) {
                 draft
                   .filter((t) => t.recordId === history.recordId)
                   .forEach((t) => t.task.name = history.newValue ?? "");
@@ -27,6 +27,9 @@ export const historyApi = api.injectEndpoints({
             }
           ));
         });
+
+        await cacheEntryRemoved
+        wsService.close();
       },
     }),
   }),
