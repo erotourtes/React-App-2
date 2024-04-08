@@ -60,7 +60,7 @@ export const boardApi = api.injectEndpoints({
       onQueryStarted: (board, { dispatch, queryFulfilled }) => {
         const patchResult = dispatch(
           boardApi.util.updateQueryData("getAllBoards", undefined, (boards) =>
-            boards.map((b) => (b.id === board.id ? board : b))
+            boards.map((b) => (b.id === board.id ? { ...b, ...board } : b))
           )
         );
         queryFulfilled.catch(() => {

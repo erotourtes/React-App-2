@@ -28,10 +28,7 @@ export class BoardService {
     });
     if (!existingBoard)
       throw new NotFoundException(`Board with id ${board.id} not found`);
-    return await this.boardRepository.save({
-      ...existingBoard,
-      ...board,
-    });
+    return await this.boardRepository.save(Object.assign(existingBoard, board));
   }
 
   async delete(id: number) {

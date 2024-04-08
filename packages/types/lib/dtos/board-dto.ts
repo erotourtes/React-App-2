@@ -1,4 +1,4 @@
-import { MaxLength } from "class-validator";
+import { IsInt, MaxLength } from "class-validator";
 
 export class CreateBoardDto {
   @MaxLength(128)
@@ -8,6 +8,9 @@ export class CreateBoardDto {
 export class UpdateBoardDto {
   @MaxLength(128)
   name: string;
+
+  @IsInt()
+  id: number;
 }
 
 export type BoardT = {
