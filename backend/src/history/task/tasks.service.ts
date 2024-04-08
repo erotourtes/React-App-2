@@ -11,7 +11,12 @@ import { TaskList } from 'src/task-lists/task-lists.entity';
 @Injectable()
 export class TaskHistoryCreatorService {
   logger: Logger;
-  constructor(private readonly taskGateway: TaskHistoryGateway) {
+
+  constructor(
+    @InjectRepository(TaskList)
+    private readonly taskListRepository: Repository<TaskList>,
+    private readonly taskGateway: TaskHistoryGateway,
+  ) {
     this.logger = new Logger(`${TaskHistoryCreatorService.name}`);
   }
 
@@ -46,11 +51,7 @@ export class TaskHistoryCreatorService {
     });
 
     // Mutates the history object
-    if (record.fieldName === 'list')
-      await this.joinSingleListName(
-        entityManager.getRepository(TaskList),
-        history,
-      );
+    if (record.fieldName === 'list') await this.joinSingleListName(history);
 
     this.taskGateway.sendHistoryUpdate({
       ...history,
@@ -64,21 +65,25 @@ export class TaskHistoryCreatorService {
   }
 
   // TODO: refactor
-  private async joinSingleListName(
-    taskListRepository: Repository<TaskList>,
-    history: HistoryT,
-  ) {
+  // Can't use the same repository from entity manager
+  // https://github.com/typeorm/typeorm/issues/9490
+  private async joinSingleListName(history: HistoryT) {
     if (history.fieldName !== 'list') return;
 
-    const oldList = await taskListRepository.findOne({
+    const oldListPromise = this.taskListRepository.findOne({
       select: { name: true },
       where: { id: +history.oldValue },
     });
 
-    const newList = await taskListRepository.findOne({
+    const newListPromise = this.taskListRepository.findOne({
       select: { name: true },
       where: { id: +history.newValue },
     });
+
+    const [oldList, newList] = await Promise.all([
+      oldListPromise,
+      newListPromise,
+    ]);
 
     history.data = {
       oldListName: oldList?.name,
