@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from 'src/tasks/tasks.entity';
-import { Repository } from 'typeorm';
+import { Repository, EntityManager } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
 import { HistoryActionType, History } from '../history.entity';
@@ -9,35 +9,39 @@ import { HistoryT } from '@packages/types';
 import { TaskList } from 'src/task-lists/task-lists.entity';
 
 @Injectable()
-export class TaskHistoryService {
+export class TaskHistoryCreatorService {
   logger: Logger;
+
   constructor(
-    @InjectRepository(History)
-    private readonly historyRepository: Repository<History>,
-    private readonly taskGateway: TaskHistoryGateway,
     @InjectRepository(TaskList)
     private readonly taskListRepository: Repository<TaskList>,
+    private readonly taskGateway: TaskHistoryGateway,
   ) {
-    this.logger = new Logger(`${TaskHistoryGateway.name}`);
+    this.logger = new Logger(`${TaskHistoryCreatorService.name}`);
   }
 
-  async create(record: {
-    actionType: HistoryActionType;
-    taskName: string;
-    fieldName?: keyof Task;
-    oldValue?: string;
-    newValue?: string;
-    recordId: number;
-    boardId: number;
-  }) {
-    const newRecord = this.historyRepository.create({
+  async create(
+    record: {
+      actionType: HistoryActionType;
+      taskName: string;
+      fieldName?: keyof Task;
+      oldValue?: string;
+      newValue?: string;
+      recordId: number;
+      boardId: number;
+    },
+    entityManager: EntityManager,
+  ) {
+    // Can't inject repositories due to https://github.com/typeorm/typeorm/issues/3563#issuecomment-460054971
+    const historyRepository = entityManager.getRepository(History);
+    const newRecord = historyRepository.create({
       ...record,
       oldValue: record.oldValue?.substring(0, 128),
       newValue: record.newValue?.substring(0, 128),
       fieldName: record.fieldName as string,
     });
 
-    const history = await this.historyRepository.save(newRecord).catch((e) => {
+    const history = await historyRepository.save(newRecord).catch((e) => {
       this.logger.error({
         status: 'History record creation failed',
         record,
@@ -58,6 +62,46 @@ export class TaskHistoryService {
       status: 'History record created',
       record,
     });
+  }
+
+  // TODO: refactor
+  // Can't use the same repository from entity manager
+  // https://github.com/typeorm/typeorm/issues/9490
+  private async joinSingleListName(history: HistoryT) {
+    if (history.fieldName !== 'list') return;
+
+    const oldListPromise = this.taskListRepository.findOne({
+      select: { name: true },
+      where: { id: +history.oldValue },
+    });
+
+    const newListPromise = this.taskListRepository.findOne({
+      select: { name: true },
+      where: { id: +history.newValue },
+    });
+
+    const [oldList, newList] = await Promise.all([
+      oldListPromise,
+      newListPromise,
+    ]);
+
+    history.data = {
+      oldListName: oldList?.name,
+      newListName: newList?.name,
+    };
+  }
+}
+
+@Injectable()
+export class TaskHistoryService {
+  logger: Logger;
+  constructor(
+    @InjectRepository(History)
+    private readonly historyRepository: Repository<History>,
+    @InjectRepository(TaskList)
+    private readonly taskListRepository: Repository<TaskList>,
+  ) {
+    this.logger = new Logger(`${TaskHistoryGateway.name}`);
   }
 
   async findAll(boardId: number): Promise<History[]> {

@@ -8,7 +8,7 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Task } from 'src/tasks/tasks.entity';
-import { TaskHistoryService } from './tasks.service';
+import { TaskHistoryCreatorService } from './tasks.service';
 import { HistoryActionType } from '../history.entity';
 import { EventEmitter } from 'stream';
 
@@ -20,7 +20,7 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
   private ee = new EventEmitter();
 
   constructor(
-    private readonly historyService: TaskHistoryService,
+    private readonly historyService: TaskHistoryCreatorService,
     @InjectDataSource() readonly dataSource: DataSource,
   ) {
     dataSource.subscribers.push(this);
@@ -37,12 +37,15 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
    */
   afterInsert(event: InsertEvent<Task>) {
     this.historyService
-      .create({
-        actionType: HistoryActionType.CREATE,
-        taskName: event.entity.name,
-        recordId: event.entity.id,
-        boardId: event.entity.list.boardId,
-      })
+      .create(
+        {
+          actionType: HistoryActionType.CREATE,
+          taskName: event.entity.name,
+          recordId: event.entity.id,
+          boardId: event.entity.list.boardId,
+        },
+        event.manager,
+      )
       .then(() => {
         this.emit('insert', event);
       });
@@ -51,33 +54,39 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
   afterUpdate(event: UpdateEvent<Task>) {
     const newTask = event.entity as Task;
     const promises = [];
-    if (newTask.isDeleted) return void this.handleRemove(newTask);
+    if (newTask.isDeleted) return void this.handleRemove(event);
 
     const isListChanged = newTask.list.id !== event.databaseEntity.list.id;
     if (isListChanged) {
-      const promise = this.historyService.create({
-        actionType: HistoryActionType.UPDATE,
-        taskName: newTask.name,
-        fieldName: 'list',
-        oldValue: event.databaseEntity.list.id.toString(),
-        newValue: newTask.list.id.toString(),
-        recordId: event.entity.id,
-        boardId: newTask.list.boardId,
-      });
+      const promise = this.historyService.create(
+        {
+          actionType: HistoryActionType.UPDATE,
+          taskName: newTask.name,
+          fieldName: 'list',
+          oldValue: event.databaseEntity.list.id.toString(),
+          newValue: newTask.list.id.toString(),
+          recordId: event.entity.id,
+          boardId: newTask.list.boardId,
+        },
+        event.manager,
+      );
       promises.push(promise);
     }
 
     const updated = event.updatedColumns.entries();
     for (const [, value] of updated) {
-      const promise = this.historyService.create({
-        actionType: HistoryActionType.UPDATE,
-        taskName: newTask.name,
-        fieldName: <keyof Task>value.databaseName,
-        oldValue: event.databaseEntity[value.databaseName],
-        newValue: newTask[value.databaseName],
-        recordId: event.entity.id,
-        boardId: newTask.list.boardId,
-      });
+      const promise = this.historyService.create(
+        {
+          actionType: HistoryActionType.UPDATE,
+          taskName: newTask.name,
+          fieldName: <keyof Task>value.databaseName,
+          oldValue: event.databaseEntity[value.databaseName],
+          newValue: newTask[value.databaseName],
+          recordId: event.entity.id,
+          boardId: newTask.list.boardId,
+        },
+        event.manager,
+      );
       promises.push(promise);
     }
 
@@ -86,14 +95,18 @@ export class TaskHistoryDbSubscriber implements EntitySubscriberInterface {
     });
   }
 
-  handleRemove(entity: Task) {
+  handleRemove(event: UpdateEvent<Task>) {
+    const entity = event.entity;
     this.historyService
-      .create({
-        actionType: HistoryActionType.DELETE,
-        taskName: entity.name,
-        recordId: entity.id,
-        boardId: entity.list.boardId,
-      })
+      .create(
+        {
+          actionType: HistoryActionType.DELETE,
+          taskName: entity.name,
+          recordId: entity.id,
+          boardId: entity.list.boardId,
+        },
+        event.manager,
+      )
       .then(() => {
         this.emit('remove', entity);
       });

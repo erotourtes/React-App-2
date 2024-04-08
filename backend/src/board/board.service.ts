@@ -30,6 +30,6 @@ export class BoardService {
     const board = await this.boardRepository.findOne({ where: { id } });
     if (!board) throw new NotFoundException(`Board with id ${id} not found`);
 
-    await this.boardRepository.delete(board);
+    await this.boardRepository.remove(board);
   }
 }

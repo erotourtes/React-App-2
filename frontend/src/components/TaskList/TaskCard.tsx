@@ -38,16 +38,44 @@ function TaskCard({ task, list: selectedList, disabled }: TaskCardProps) {
   const taskId = Number(queryParams.get("task") || "");
   const edit = Boolean(queryParams.get("edit") === "");
 
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openDialog, setOpenDialog] = useState(taskId === task.id);
+  const [editMode, setEditMode] = useState(taskId === task.id && edit);
+
+  const onCardClick = () => {
+    setEditMode(false);
+    setOpenDialog(true);
+    navigate(`?task=${task.id}`)
+  }
+
+  const onEdit3DotsClick = () => {
+    setOpenDialog(true);
+    setOpenMenu(false);
+    setEditMode(true);
+    navigate(`?task=${task.id}&edit`)
+  }
+
+  const onEditRequest = () => navigate(`?task=${task.id}&edit`)
+
+
+  const onDialogChange = (open: boolean) => {
+    setOpenDialog(open);
+    if (!open) navigate(".")
+  }
+
   return (
     <TaskCardOrig
       task={task}
       list={selectedList}
       disabled={disabled}
-      open={taskId === task.id}
-      edit={taskId === task.id && edit}
-      onCardClick={() => navigate(`?task=${task.id}`)}
-      onEditClick={() => navigate(`?task=${task.id}&edit`)}
-      onDialogClose={() => navigate(".")}
+      openDialog={openDialog}
+      edit={editMode}
+      openMenu={openMenu}
+      onMenuOpenChange={setOpenMenu}
+      onCardClick={onCardClick}
+      onEdit3DotsClick={onEdit3DotsClick}
+      onEditRequest={onEditRequest}
+      onDialogChange={onDialogChange}
     />
   );
 }
@@ -57,35 +85,35 @@ interface TaskCardPropsOrig {
   list: TaskListT;
   disabled?: boolean;
   edit?: boolean;
-  open?: boolean;
+  openDialog?: boolean;
+  openMenu: boolean;
+  onMenuOpenChange: (open: boolean) => void;
   onCardClick: () => void;
-  onEditClick: () => void;
-  onDialogClose: () => void;
+  onEdit3DotsClick: () => void;
+  onEditRequest: () => void;
+  onDialogChange: (open: boolean) => void;
 }
 
-function TaskCardOrig({
-                        task,
-                        list: selectedList,
-                        disabled,
-                        edit = false,
-                        open,
-                        onCardClick,
-                        onEditClick,
-                        onDialogClose
-                      }: TaskCardPropsOrig) {
-  const [openMenu, setOpenMenu] = useState(false);
-  const [openDialog, setOpenDialog] = useState(open);
-  const [editMode, setEditMode] = useState(edit);
+export function TaskCardOrig({
+                               task,
+                               list: selectedList,
+                               disabled,
+                               edit = false,
+                               openDialog,
+                               openMenu,
+                               onMenuOpenChange,
+                               onCardClick,
+                               onEdit3DotsClick,
+                               onEditRequest,
+                               onDialogChange,
+                             }: TaskCardPropsOrig) {
 
   const [deleteTask] = useDeleteTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
 
   const onEditPressed = (e: Event) => {
     e.stopPropagation();
-    onEditClick();
-    setOpenDialog(true);
-    setOpenMenu(false);
-    setEditMode(true);
+    onEdit3DotsClick();
   };
 
   const onDeletePressed = (e: Event) => {
@@ -98,14 +126,7 @@ function TaskCardOrig({
     if (disabled) return;
     e.stopPropagation();
     onCardClick()
-    setEditMode(false);
-    setOpenDialog(true);
   };
-
-  const onDialogChange = (open: boolean) => {
-    setOpenDialog(open);
-    if (!open) onDialogClose();
-  }
 
   return (
     <Card className={`hover:border-primary ${disabled && "bg-muted"}`}>
@@ -114,10 +135,11 @@ function TaskCardOrig({
         className="p-3 pb-1 flex-row justify-between items-center"
       >
         <p className="text-ellipsis overflow-hidden w-[200px]">{task.name}</p>
-        <DropdownMenu onOpenChange={setOpenMenu} open={openMenu}>
+        <DropdownMenu onOpenChange={onMenuOpenChange} open={openMenu}>
           <DropdownMenuTrigger
             disabled={disabled}
             className="hover:bg-accent hover:text-accent-foreground rounded-sm"
+            onClick={(e) => e.stopPropagation()}
           >
             <EllipsisVertical/>
           </DropdownMenuTrigger>
@@ -171,10 +193,10 @@ function TaskCardOrig({
         <EditTaskDialog
           isOpen={openDialog}
           onDialogChange={onDialogChange}
-          onEditRequest={() => onEditClick()}
+          onEditRequest={onEditRequest}
           task={task}
           selectedList={selectedList}
-          editMode={editMode}
+          editMode={edit}
         />
       )}
     </Card>
