@@ -3,6 +3,7 @@ import { render } from "@testing-library/react";
 import { ListColumn } from "@components/TaskList/TaskList.tsx";
 import { useGetTasksForListQuery } from "@redux/api/hooks.ts";
 import { mockTaskLists, mockTasks } from "../../__mocks__/typeMocks.ts";
+import { MemoryRouter } from 'react-router-dom'
 
 jest.mock("@/redux/api/wsService.ts");
 jest.mock("@/redux/api/hooks.ts");
@@ -28,7 +29,7 @@ describe("ListColumn", () => {
   it("should have tasks", () => {
     jest.mocked(useGetTasksForListQuery).mockReturnValue({ data: tasks, refetch: jest.fn() })
 
-    const { getByText } = render(<ListColumn list={list}/>);
+    const { getByText } = render(<MemoryRouter><ListColumn list={list}/></MemoryRouter>);
 
     expect(getByText(tasks[0].name)).toBeInTheDocument();
     expect(getByText(tasks[1].name)).toBeInTheDocument();

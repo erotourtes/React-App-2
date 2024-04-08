@@ -11,18 +11,20 @@ Open [http://localhost:8080/React-App/](http://localhost:8080/React-App/) in you
 
 ## Installation
 ```bash
-git clone git@github.com:erotourtes/React-App.git && cd React-App
-
 npm install
 ```
+> [!IMPORTANT]
+> Make sure to build shared packges before executing other commands
+> ```bash
+> npx turbo run build --filter="@packages/types"
+> ```
 
 ## Development mode
 ```bash
 # Setup database
 docker compose up --build db
 
-# Build shared packages first
-npx turbo run build --filter="@packages/types" && npm start
+npm start
 ```
 
 ## Testing

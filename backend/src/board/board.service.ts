@@ -23,7 +23,15 @@ export class BoardService {
   }
 
   async update(board: UpdateBoardDto) {
-    return await this.boardRepository.save(board);
+    const existingBoard = await this.boardRepository.findOne({
+      where: { id: board.id },
+    });
+    if (!existingBoard)
+      throw new NotFoundException(`Board with id ${board.id} not found`);
+    return await this.boardRepository.save({
+      ...existingBoard,
+      ...board,
+    });
   }
 
   async delete(id: number) {
